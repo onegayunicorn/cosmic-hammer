@@ -9,7 +9,7 @@
 - [x] Add missing configuration, API contract, pipeline, webhook, agent, sandbox, and integration files.
 - [x] Run unit checks, type checks, production build, and simulation commands.
 - [x] Push the validated changes to the public GitHub repository.
-- [ ] Save a managed checkpoint and report results and limitations.
+- [x] Save a managed checkpoint and report results and limitations.
 
 ## Physical Integration Extension
 
@@ -32,5 +32,5 @@
 ## Final Verification Wiring
 
 - [x] Wire the Predictions workspace to the persisted observation-series comparison procedure with loading, error, and empty states.
-- [ ] Push the latest full-stack changes to the public GitHub repository.
+- [x] Push the latest full-stack changes to the public GitHub repository.
 - [ ] Save a new managed checkpoint after the latest validation.
