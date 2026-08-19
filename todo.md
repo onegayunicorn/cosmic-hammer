@@ -33,4 +33,4 @@
 
 - [x] Wire the Predictions workspace to the persisted observation-series comparison procedure with loading, error, and empty states.
 - [x] Push the latest full-stack changes to the public GitHub repository.
-- [ ] Save a new managed checkpoint after the latest validation.
+- [x] Save a new managed checkpoint after the latest validation.
