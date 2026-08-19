@@ -1,0 +1,273 @@
+{
+  "trust": {
+    "deviceId": "device-demo-01",
+    "telemetryVerified": true,
+    "provenance": [
+      "DEVICE_OBSERVED",
+      "VERIFIED",
+      "DEVICE_OBSERVED",
+      "VERIFIED"
+    ]
+  },
+  "stationValidation": {
+    "normalized": [
+      {
+        "id": "obs-1",
+        "timestamp": "2026-08-19T17:00:00.000Z",
+        "latitude": -27.47,
+        "longitude": 153.02,
+        "value": 21.8,
+        "unit": "C"
+      },
+      {
+        "id": "obs-2",
+        "timestamp": "2026-08-19T17:00:00.000Z",
+        "latitude": -27.47,
+        "longitude": 153.02,
+        "value": null,
+        "unit": "C"
+      },
+      {
+        "id": "obs-3",
+        "timestamp": "bad-coordinate",
+        "latitude": 120,
+        "longitude": 153.02,
+        "value": 22.1,
+        "unit": "C"
+      }
+    ],
+    "duplicateCount": 1,
+    "missingCount": 1,
+    "invalidCoordinateCount": 1,
+    "quality": "poor",
+    "flags": [
+      "INVALID_TIMESTAMP",
+      "DUPLICATE_TIMESTAMP",
+      "MISSING_VALUE",
+      "INVALID_COORDINATE"
+    ]
+  },
+  "verification": {
+    "pairedCount": 2,
+    "missingObservations": 0,
+    "mae": 0.4499999999999993,
+    "rmse": 0.4527692569068702,
+    "meanBiasError": 0.05000000000000071,
+    "forecastAgeMinutes": 15,
+    "observationLatencyMinutes": 4,
+    "calibrationAgeDays": 10,
+    "driftDetected": false,
+    "alerts": [],
+    "healthScore": 100,
+    "provenanceState": "VERIFIED"
+  },
+  "driftCase": {
+    "pairedCount": 1,
+    "missingObservations": 0,
+    "mae": 8,
+    "rmse": 8,
+    "meanBiasError": 8,
+    "forecastAgeMinutes": 240,
+    "observationLatencyMinutes": 80,
+    "calibrationAgeDays": 220,
+    "driftDetected": true,
+    "alerts": [
+      "CALIBRATION_EXPIRING",
+      "STALE_FORECAST",
+      "OBSERVATION_LATENCY",
+      "FORECAST_DRIFT"
+    ],
+    "healthScore": 40,
+    "provenanceState": "VERIFIED"
+  },
+  "forensic": {
+    "traceId": "trace-demo-01",
+    "observationId": "obs-1",
+    "stationId": "station-demo-01",
+    "deviceId": "device-demo-01",
+    "seriesId": "series-demo-01",
+    "startedAt": "2026-08-19T17:58:11.291Z",
+    "terminalStatus": "verified",
+    "events": [
+      {
+        "stage": "observation",
+        "timestamp": "2026-08-19T17:58:11.286Z",
+        "status": "passed",
+        "referenceId": "obs-1",
+        "evidenceClass": "observed",
+        "details": {
+          "unit": "C"
+        }
+      },
+      {
+        "stage": "device",
+        "timestamp": "2026-08-19T17:58:11.286Z",
+        "status": "passed",
+        "referenceId": "device-demo-01",
+        "evidenceClass": "observed",
+        "details": {
+          "firmware": "1.0.0"
+        }
+      },
+      {
+        "stage": "signature",
+        "timestamp": "2026-08-19T17:58:11.286Z",
+        "status": "passed",
+        "referenceId": "key-demo-1",
+        "evidenceClass": "observed",
+        "details": {
+          "algorithm": "Ed25519"
+        }
+      },
+      {
+        "stage": "calibration",
+        "timestamp": "2026-08-19T17:58:11.286Z",
+        "status": "passed",
+        "referenceId": "cal-1",
+        "evidenceClass": "observed",
+        "details": {
+          "ageDays": 10
+        }
+      },
+      {
+        "stage": "ingestion",
+        "timestamp": "2026-08-19T17:58:11.286Z",
+        "status": "passed",
+        "referenceId": "ingest-demo-01",
+        "evidenceClass": "derived",
+        "details": {
+          "normalized": true
+        }
+      },
+      {
+        "stage": "persistence",
+        "timestamp": "2026-08-19T17:58:11.286Z",
+        "status": "passed",
+        "referenceId": "db-demo-01",
+        "evidenceClass": "derived",
+        "details": {}
+      },
+      {
+        "stage": "forecast-comparison",
+        "timestamp": "2026-08-19T17:58:11.286Z",
+        "status": "passed",
+        "referenceId": "verification-demo-01",
+        "evidenceClass": "derived",
+        "details": {
+          "mae": 0.4499999999999993
+        }
+      },
+      {
+        "stage": "dashboard-rendering",
+        "timestamp": "2026-08-19T17:58:11.286Z",
+        "status": "passed",
+        "referenceId": "dashboard-vnext",
+        "evidenceClass": "derived",
+        "details": {
+          "layerCount": 2
+        }
+      }
+    ],
+    "completedAt": "2026-08-19T17:58:11.292Z"
+  },
+  "scene": {
+    "version": "4d-scene-v1",
+    "layerCount": 2,
+    "renderedPlatforms": [
+      {
+        "platform": "web",
+        "layerCount": 2,
+        "timestamp": "2026-08-19T17:58:11.286Z"
+      },
+      {
+        "platform": "android",
+        "layerCount": 2,
+        "timestamp": "2026-08-19T17:58:11.286Z"
+      },
+      {
+        "platform": "desktop",
+        "layerCount": 2,
+        "timestamp": "2026-08-19T17:58:11.286Z"
+      },
+      {
+        "platform": "vr",
+        "layerCount": 2,
+        "timestamp": "2026-08-19T17:58:11.286Z"
+      },
+      {
+        "platform": "mobile",
+        "layerCount": 2,
+        "timestamp": "2026-08-19T17:58:11.286Z"
+      },
+      {
+        "platform": "wall",
+        "layerCount": 2,
+        "timestamp": "2026-08-19T17:58:11.286Z"
+      }
+    ]
+  },
+  "seal": {
+    "valid": true,
+    "hash": "374866543152d266426130c7838c1900e929834de68a9f3937f1f45abeeec474"
+  },
+  "wealthBridge": {
+    "strategies": {
+      "status": "SANDBOX_ONLY",
+      "activeStrategies": [
+        "hyperfusion_mining_concept",
+        "star_seed_staking_concept",
+        "quantum_arbitrage_concept"
+      ],
+      "financialExecution": false,
+      "estimatedApy": null,
+      "reason": "No live trading, wallet, marketplace, or wealth promises are enabled."
+    },
+    "fusion": {
+      "status": "STABLE_SIMULATION",
+      "energyLevel": 92.5,
+      "purity": 0.99,
+      "tradingSignal": "HOLD_ONLY"
+    },
+    "starSeed": {
+      "status": "SEED_CONCEPT_READY",
+      "mintReady": false,
+      "financialAction": "DISABLED"
+    },
+    "bridge": {
+      "startPoint": "Origin",
+      "endPoint": "Destination",
+      "active": 2,
+      "capacity": 3
+    },
+    "bells": [
+      {
+        "index": 0,
+        "rung": true
+      },
+      {
+        "index": 1,
+        "rung": true
+      },
+      {
+        "index": 2,
+        "rung": false
+      },
+      {
+        "index": 3,
+        "rung": false
+      },
+      {
+        "index": 4,
+        "rung": false
+      }
+    ],
+    "ledgerValid": true,
+    "councilApproved": true,
+    "teleOs": {
+      "network": "CosmicSandbox",
+      "vendors": 1,
+      "avenues": 1
+    },
+    "doorway": "SIMULATION_OPTIMAL"
+  }
+}

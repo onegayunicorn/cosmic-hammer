@@ -1,0 +1,12 @@
+export type LayerKind = "station" | "weather" | "pressure" | "temperature" | "humidity" | "wind" | "precipitation" | "forecast" | "observed" | "error" | "health" | "calibration" | "telemetry" | "trust" | "anomaly" | "simulation" | "digital-twin" | "topology";
+export interface Coordinate { x: number; y: number; z: number; frame: string; }
+export interface TemporalState { timestamp: string; durationSeconds: number; playbackRate: number; }
+export interface OverlayLayer { id: string; kind: LayerKind; visible: boolean; opacity: number; bounds?: { min: Coordinate; max: Coordinate }; coordinateReferenceSystem: string; resolution?: string; refreshRateSeconds?: number; confidence?: number; quality?: string; provenance: string; data: unknown; }
+export interface SceneGraph4D { version: "4d-scene-v1"; temporal: TemporalState; layers: OverlayLayer[]; coordinateReferenceSystem: string; metadata: { source: string; generatedAt: string; }; }
+
+export function transformCoordinate(coordinate: Coordinate, targetFrame: string): Coordinate { if (coordinate.frame === targetFrame) return coordinate; return { ...coordinate, frame: targetFrame }; }
+export function composeSceneGraph(input: { timestamp: string; layers: OverlayLayer[]; coordinateReferenceSystem?: string }): SceneGraph4D { return { version: "4d-scene-v1", temporal: { timestamp: input.timestamp, durationSeconds: 0, playbackRate: 1 }, layers: input.layers.map((layer) => ({ ...layer, opacity: Math.min(1, Math.max(0, layer.opacity)) })), coordinateReferenceSystem: input.coordinateReferenceSystem ?? "WGS84", metadata: { source: "cosmic-hammer", generatedAt: new Date().toISOString() } }; }
+export function setLayerVisibility(scene: SceneGraph4D, layerId: string, visible: boolean): SceneGraph4D { return { ...scene, layers: scene.layers.map((layer) => layer.id === layerId ? { ...layer, visible } : layer) }; }
+export function setPlayback(scene: SceneGraph4D, timestamp: string, playbackRate: number): SceneGraph4D { return { ...scene, temporal: { ...scene.temporal, timestamp, playbackRate } }; }
+export interface RendererAdapter { platform: "web" | "android" | "desktop" | "vr" | "mobile" | "wall"; render(scene: SceneGraph4D): { platform: string; layerCount: number; timestamp: string; }; }
+export const rendererAdapters: RendererAdapter[] = (["web", "android", "desktop", "vr", "mobile", "wall"] as const).map((platform) => ({ platform, render: (scene) => ({ platform, layerCount: scene.layers.filter((layer) => layer.visible).length, timestamp: scene.temporal.timestamp }) }));

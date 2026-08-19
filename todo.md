@@ -34,3 +34,23 @@
 - [x] Wire the Predictions workspace to the persisted observation-series comparison procedure with loading, error, and empty states.
 - [x] Push the latest full-stack changes to the public GitHub repository.
 - [x] Save a new managed checkpoint after the latest validation.
+
+## Physical Data & 4D Digital Twin vNext
+
+- [x] Map the supplied vNext requirements to the current repository.
+- [x] Scaffold apps, packages, services, hardware, infrastructure, experiments, and simulation folders.
+- [x] Add Ed25519 device identity, key rotation, replay protection, and provenance state-machine contracts.
+- [x] Add station management, observation quality, calibration, and forensic-view contracts.
+- [x] Add automated verification pipeline stages, health scoring, drift detection, and alert evaluation.
+- [x] Add canonical 4D scene graph, overlay layers, coordinate transforms, temporal playback, and renderer adapters.
+- [x] Add platform-seal manifest and deterministic seal verification.
+- [x] Add wealth-bridge concept modules as clearly labeled sandbox-only simulations without financial execution.
+- [x] Run simulations for all supported operations, processes, and functions.
+- [x] Run regression tests, type checks, production build, and visual verification.
+- [x] Push the completed changes and save a managed checkpoint.
+
+## vNext Coverage Completion
+
+- [x] Add an explicit forensic trace contract linking observation, device, signature, calibration, ingestion, persistence, verification, and dashboard rendering.
+- [x] Expand simulations for station ingestion, duplicate and missing-data detection, key rotation and revocation, drift alerts, and forensic trace generation.
+- [ ] Push the vNext changes to the public repository and save a new managed checkpoint after coverage validation.

@@ -5,7 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Route, Switch, useLocation } from "wouter";
 import { navItems, type ModuleKey } from "@/lib/cosmic-data";
-import Home from "@/pages/Home";
+import Home from "./pages/Home";
+import VNext from "./pages/VNext";
 import NotFound from "@/pages/NotFound";
 import { Activity, ArrowUpRight, Bell, ChevronDown, Command, Menu, Orbit, PanelLeftClose, Search, Sparkles, X } from "lucide-react";
 
@@ -43,7 +44,8 @@ function WorkspaceLayout() {
           <div className="flex items-center gap-3"><button className="rounded-lg border border-white/10 p-2 text-[#a7b7bb] lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Open navigation"><Menu size={18} /></button><div className="hidden items-center gap-2 text-xs text-[#70828a] sm:flex"><span className="font-mono">WORKSPACE</span><span>/</span><span className="text-[#d3dcda]">{navItems.find((n) => n.key === current)?.label ?? "Mission control"}</span></div><div className="flex items-center gap-2 sm:hidden"><Activity size={15} className="text-[#f4a261]" /><span className="font-display text-sm">COSMIC HAMMER</span></div></div>
           <div className="flex items-center gap-2"><button className="header-tool hidden sm:flex"><Search size={15} /><span>Search</span><kbd>⌘ K</kbd></button><button className="header-icon"><Bell size={16} /></button><div className="ml-2 flex items-center gap-2 border-l border-white/10 pl-3"><span className="grid h-8 w-8 place-items-center rounded-full bg-[#1c4b58] font-mono text-[11px] text-[#c2e2dd]">TP</span><span className="hidden text-left sm:block"><strong className="block text-xs font-medium">Operator</strong><small className="mono-label text-[#627680]">ORIGIN / 01</small></span><ChevronDown size={14} className="text-[#6c7d84]" /></div></div>
         </header>
-        <div className="mx-auto max-w-[1500px] px-5 py-7 sm:px-8 sm:py-10"><Switch><Route path="/" component={Home} /><Route path="/:module" component={Home} /><Route component={NotFound} /></Switch></div>
+        <div className="mx-auto max-w-[1500px] px-5 py-7 sm:px-8 sm:py-10"><Switch><Route path={"/"} component={Home} />
+      <Route path={"/vnext"} component={VNext} /><Route path="/:module" component={Home} /><Route component={NotFound} /></Switch></div>
       </main>
       <Toaster />
     </div>
