@@ -53,4 +53,4 @@
 
 - [x] Add an explicit forensic trace contract linking observation, device, signature, calibration, ingestion, persistence, verification, and dashboard rendering.
 - [x] Expand simulations for station ingestion, duplicate and missing-data detection, key rotation and revocation, drift alerts, and forensic trace generation.
-- [ ] Push the vNext changes to the public repository and save a new managed checkpoint after coverage validation.
+- [x] Push the vNext changes to the public repository and save a new managed checkpoint after coverage validation.
