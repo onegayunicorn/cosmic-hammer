@@ -1,10 +1,11 @@
 // Orbital Cartography style note: this module feeds an observatory-like interface where every value is explicitly marked as live, simulated, or unverified.
-export type ModuleKey = "overview" | "pressure" | "simulation" | "twin" | "agents" | "pipelines" | "webhooks" | "docs";
+export type ModuleKey = "overview" | "pressure" | "simulation" | "prediction" | "twin" | "agents" | "pipelines" | "webhooks" | "docs";
 
 export const navItems: Array<{ key: ModuleKey; label: string; detail: string; icon: string }> = [
   { key: "overview", label: "Mission control", detail: "System overview", icon: "◈" },
   { key: "pressure", label: "Pressure field", detail: "Model explorer", icon: "◎" },
   { key: "simulation", label: "Sandbox", detail: "Orbit experiments", icon: "⌁" },
+  { key: "prediction", label: "Predictions", detail: "Weather + twin positions", icon: "⌂" },
   { key: "twin", label: "Digital twin", detail: "Character customizer", icon: "◌" },
   { key: "agents", label: "Agents", detail: "Orchestrator", icon: "✦" },
   { key: "pipelines", label: "Pipelines", detail: "Runbooks & flow", icon: "↗" },

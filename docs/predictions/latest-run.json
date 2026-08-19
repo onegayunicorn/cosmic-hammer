@@ -1,0 +1,30 @@
+{
+  "runId": "pred-0042",
+  "model": "cosmic-hammer-pressure-hypothesis-v0.1",
+  "weather": {
+    "mode": "weather",
+    "location": "Brisbane, AU",
+    "horizonHours": 12,
+    "temperatureC": 23.9,
+    "humidity": 63.5,
+    "pressureHpa": 1014.2,
+    "windKmh": 15.9,
+    "precipitationChance": 41.1,
+    "confidence": 82.5,
+    "uncertainty": 17.5,
+    "modelState": "simulation"
+  },
+  "digitalTwin": {
+    "mode": "digital-twin",
+    "twinId": "AST-0042",
+    "position": {
+      "x": 37.351,
+      "y": -0.4,
+      "z": 0.324
+    },
+    "displacement": 26.461,
+    "confidence": 94.5,
+    "uncertaintyMeters": 2.05,
+    "modelState": "simulation"
+  }
+}
