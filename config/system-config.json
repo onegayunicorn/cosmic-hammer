@@ -1,0 +1,12 @@
+{
+  "project": "cosmic-hammer",
+  "mode": "static-demo",
+  "defaultModel": "invisible-pressure",
+  "modelState": "hypothesis",
+  "externalWrites": false,
+  "integrations": {
+    "universalDriver": "contract-only",
+    "digitalTwinRuntime": "contract-only",
+    "similarWeb": "research-hook-only"
+  }
+}

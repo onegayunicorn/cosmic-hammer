@@ -1,0 +1,12 @@
+{
+  "id": "cosmic-orbit-01",
+  "label": "Orbit validation loop",
+  "mode": "simulation",
+  "stages": [
+    { "id": "ingest", "type": "driver.read", "input": "sensor.pressure", "output": "raw-field" },
+    { "id": "normalize", "type": "transform.units", "input": "raw-field", "output": "normalized-field" },
+    { "id": "solve", "type": "pressure.solve", "input": "normalized-field", "output": "trajectory" },
+    { "id": "render", "type": "ui.trace", "input": "trajectory", "output": "operator-view" }
+  ],
+  "guardrails": { "externalWrites": false, "maxDurationSeconds": 30, "requiresReview": true }
+}
