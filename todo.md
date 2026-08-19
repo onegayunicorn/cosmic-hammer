@@ -8,5 +8,5 @@
 - [x] Add prediction pages, cards, controls, and simulation status to the frontend.
 - [x] Add missing configuration, API contract, pipeline, webhook, agent, sandbox, and integration files.
 - [x] Run unit checks, type checks, production build, and simulation commands.
-- [ ] Push the validated changes to the public GitHub repository.
+- [x] Push the validated changes to the public GitHub repository.
 - [ ] Save a managed checkpoint and report results and limitations.
