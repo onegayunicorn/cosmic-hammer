@@ -1,6 +1,6 @@
 import { and, desc, eq, lt, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { calibrationRecords, devices, forensicTraces, InsertUser, predictionRuns, providerSnapshots, scheduledAlerts, sensors, stations, telemetryRecords, users, weatherObservationSeries } from "../drizzle/schema";
+import { calibrationRecords, claimReviews, devices, evidenceExports, forensicTraces, InsertUser, predictionRuns, providerSnapshots, roadmapClaims, scheduledAlerts, sensors, sourceCitations, stations, telemetryRecords, users, weatherObservationSeries } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 import type { DeviceIdentityInput, SignedTelemetryInput } from "../shared/contracts";
 
@@ -99,6 +99,49 @@ export async function getObservationSeries(seriesId: string) {
   const rows = await db.select().from(weatherObservationSeries).where(eq(weatherObservationSeries.seriesId, seriesId)).limit(1);
   return rows[0];
 }
+
+export async function listEvidenceAggregates(createdBy: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database unavailable");
+  const ownedStations = await db.select().from(stations).where(eq(stations.createdBy, createdBy));
+  const ownedDevices = await db.select().from(devices).where(eq(devices.registeredBy, createdBy));
+  const stationIds = new Set(ownedStations.map((station) => station.stationId));
+  const deviceIds = new Set(ownedDevices.map((device) => device.deviceId));
+  const allTelemetry = await db.select().from(telemetryRecords);
+  const allSnapshots = await db.select().from(providerSnapshots);
+  const ownedSnapshots = allSnapshots.filter((snapshot) => stationIds.has(snapshot.stationId));
+  const ownedTelemetry = allTelemetry.filter((reading) => deviceIds.has(reading.deviceId));
+  const ownedPredictions = await db.select().from(predictionRuns).where(eq(predictionRuns.createdBy, createdBy));
+  const forecastMetrics = ownedPredictions.reduce((summary, run) => {
+    const payload = run.payload as { metrics?: { mae?: number; rmse?: number; bias?: number; driftScore?: number } };
+    const metrics = payload?.metrics;
+    if (!metrics) return summary;
+    if (typeof metrics.mae === "number") summary.mae.push(metrics.mae);
+    if (typeof metrics.rmse === "number") summary.rmse.push(metrics.rmse);
+    if (typeof metrics.bias === "number") summary.bias.push(metrics.bias);
+    if (typeof metrics.driftScore === "number") summary.drift.push(metrics.driftScore);
+    return summary;
+  }, { mae: [] as number[], rmse: [] as number[], bias: [] as number[], drift: [] as number[] });
+  const average = (values: number[]) => values.length ? values.reduce((total, value) => total + value, 0) / values.length : null;
+  const ownedAlerts = await db.select().from(scheduledAlerts);
+  const metrics = ownedTelemetry.reduce((summary, reading) => {
+    summary.verifiedObservations += reading.evidenceClass === "observed" ? 1 : 0;
+    summary.telemetryRecords += 1;
+    return summary;
+  }, { verifiedObservations: 0, telemetryRecords: 0 });
+  const providers = new Set(ownedSnapshots.map((snapshot) => snapshot.provider));
+  const warnings = ownedAlerts.filter((alert) => alert.severity !== "info" && !alert.acknowledgedAt).length;
+  return { stations: ownedStations.length, onlineStations: ownedStations.filter((station) => station.status === "online").length, sensors: (await db.select().from(sensors).where(eq(sensors.createdBy, createdBy))).length, verifiedObservations: metrics.verifiedObservations, telemetryRecords: metrics.telemetryRecords, providerCoverage: providers.size, providers: Array.from(providers), forecastRuns: ownedPredictions.length, activeAlerts: warnings, calibrationRecords: (await db.select().from(calibrationRecords).where(eq(calibrationRecords.createdBy, createdBy))).length, forecastAccuracy: { mae: average(forecastMetrics.mae), rmse: average(forecastMetrics.rmse), bias: average(forecastMetrics.bias) }, driftScore: average(forecastMetrics.drift), evidenceClass: "observed_and_derived_only" as const };
+}
+
+export async function listSourceCitations(createdBy: number) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); return db.select().from(sourceCitations).where(eq(sourceCitations.createdBy, createdBy)).orderBy(desc(sourceCitations.createdAt)); }
+export async function createSourceCitation(input: { citationId: string; title: string; publisher?: string; url: string; accessedAt: Date; sourceType: "primary" | "secondary" | "authored" | "internal"; notes?: string }, createdBy: number) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); await db.insert(sourceCitations).values({ ...input, publisher: input.publisher ?? null, notes: input.notes ?? null, createdBy }); return { citationId: input.citationId }; }
+export async function listClaimReviews(claimId: string, reviewerId: number) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const claims = await db.select().from(roadmapClaims).where(and(eq(roadmapClaims.claimId, claimId), eq(roadmapClaims.submittedBy, reviewerId))); if (!claims[0]) throw new Error("Claim not found"); return db.select().from(claimReviews).where(eq(claimReviews.claimId, claimId)).orderBy(desc(claimReviews.createdAt)); }
+export async function listRoadmapClaims(createdBy: number) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); return db.select().from(roadmapClaims).where(eq(roadmapClaims.submittedBy, createdBy)).orderBy(desc(roadmapClaims.updatedAt)); }
+export async function createRoadmapClaim(input: { claimId: string; label: string; value: string; category: "actual" | "target" | "assumption" | "simulation" | "hypothesis" | "unverified"; citationId?: string; evidenceNote: string }, submittedBy: number) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); await db.insert(roadmapClaims).values({ ...input, citationId: input.citationId ?? null, status: "draft", submittedBy }); return { claimId: input.claimId, status: "draft" as const }; }
+export async function submitRoadmapClaim(claimId: string, submittedBy: number) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); await db.update(roadmapClaims).set({ status: "submitted" }).where(and(eq(roadmapClaims.claimId, claimId), eq(roadmapClaims.submittedBy, submittedBy))); return { claimId, status: "submitted" as const }; }
+export async function reviewRoadmapClaim(input: { claimId: string; reviewerId: number; decision: "approve" | "reject" | "request_changes"; rationale: string }) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const status = input.decision === "approve" ? "approved" : input.decision === "reject" ? "rejected" : "draft"; await db.update(roadmapClaims).set({ status, reviewedBy: input.reviewerId, reviewedAt: new Date() }).where(eq(roadmapClaims.claimId, input.claimId)); await db.insert(claimReviews).values({ reviewId: `${input.claimId}-${Date.now()}`, claimId: input.claimId, reviewerId: input.reviewerId, decision: input.decision, rationale: input.rationale }); return { claimId: input.claimId, status }; }
+export async function createEvidenceExport(payload: unknown, requestedBy: number) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const exportId = `data-room-${Date.now()}`; await db.insert(evidenceExports).values({ exportId, requestedBy, payload: payload as Record<string, unknown> }); return { exportId, payload }; }
 
 export async function savePredictionRun(input: { runId: string; modelVersion: string; coordinateSystem: string; payload: unknown; uncertainty?: number; createdBy: number }) {
   const db = await getDb();

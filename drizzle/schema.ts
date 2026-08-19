@@ -138,6 +138,53 @@ export const scheduledAlerts = mysqlTable("scheduledAlerts", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const sourceCitations = mysqlTable("sourceCitations", {
+  id: int("id").autoincrement().primaryKey(),
+  citationId: varchar("citationId", { length: 128 }).notNull().unique(),
+  title: varchar("title", { length: 256 }).notNull(),
+  publisher: varchar("publisher", { length: 256 }),
+  url: text("url").notNull(),
+  accessedAt: timestamp("accessedAt").notNull(),
+  sourceType: mysqlEnum("sourceType", ["primary", "secondary", "authored", "internal"]).notNull(),
+  notes: text("notes"),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const roadmapClaims = mysqlTable("roadmapClaims", {
+  id: int("id").autoincrement().primaryKey(),
+  claimId: varchar("claimId", { length: 128 }).notNull().unique(),
+  label: varchar("label", { length: 256 }).notNull(),
+  value: varchar("value", { length: 256 }).notNull(),
+  category: mysqlEnum("category", ["actual", "target", "assumption", "simulation", "hypothesis", "unverified"]).notNull(),
+  status: mysqlEnum("status", ["draft", "submitted", "approved", "rejected", "archived"]).notNull().default("draft"),
+  citationId: varchar("citationId", { length: 128 }),
+  evidenceNote: text("evidenceNote").notNull(),
+  submittedBy: int("submittedBy").notNull(),
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: timestamp("reviewedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const claimReviews = mysqlTable("claimReviews", {
+  id: int("id").autoincrement().primaryKey(),
+  reviewId: varchar("reviewId", { length: 128 }).notNull().unique(),
+  claimId: varchar("claimId", { length: 128 }).notNull(),
+  reviewerId: int("reviewerId").notNull(),
+  decision: mysqlEnum("decision", ["approve", "reject", "request_changes"]).notNull(),
+  rationale: text("rationale").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const evidenceExports = mysqlTable("evidenceExports", {
+  id: int("id").autoincrement().primaryKey(),
+  exportId: varchar("exportId", { length: 128 }).notNull().unique(),
+  requestedBy: int("requestedBy").notNull(),
+  payload: json("payload").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const predictionRuns = mysqlTable("predictionRuns", {
   id: int("id").autoincrement().primaryKey(),
   runId: varchar("runId", { length: 128 }).notNull().unique(),
@@ -161,4 +208,8 @@ export type ProviderSnapshot = typeof providerSnapshots.$inferSelect;
 export type ScheduledAlert = typeof scheduledAlerts.$inferSelect;
 export type TelemetryRecord = typeof telemetryRecords.$inferSelect;
 export type PredictionRun = typeof predictionRuns.$inferSelect;
+export type SourceCitation = typeof sourceCitations.$inferSelect;
+export type RoadmapClaim = typeof roadmapClaims.$inferSelect;
+export type ClaimReview = typeof claimReviews.$inferSelect;
+export type EvidenceExport = typeof evidenceExports.$inferSelect;
 export type WeatherObservationSeries = typeof weatherObservationSeries.$inferSelect;

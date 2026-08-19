@@ -5,10 +5,11 @@ import { createHeartbeatJob } from "./_core/heartbeat";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { createCalibration, createSensor, createStation, deleteStation, getDevice, getLatestDeviceSequence, getObservationSeries, listCalibrations, listForensicTraces, listSensors, listStations, registerDevice, saveForensicTrace, saveObservationSeries, savePredictionRun, saveScheduledAlert, saveTelemetry, setStationTaskUid, updateSensor, updateStation } from "./db";
+import { createCalibration, createEvidenceExport, createRoadmapClaim, createSensor, createSourceCitation, createStation, deleteStation, getDevice, getLatestDeviceSequence, getObservationSeries, listCalibrations, listClaimReviews, listEvidenceAggregates, listForensicTraces, listStations, listRoadmapClaims, listSensors, listSourceCitations, registerDevice, reviewRoadmapClaim, saveForensicTrace, saveObservationSeries, savePredictionRun, saveScheduledAlert, saveTelemetry, setStationTaskUid, submitRoadmapClaim, updateSensor, updateStation } from "./db";
 import { compareForecastToObservations } from "./weather";
 import { fetchOpenMeteoForecast } from "./weather";
 import { validateDeviceIdentity, validateTelemetry, verifyTelemetrySignature } from "./telemetry";
+import { buildDataRoomPayload } from "../shared/evidence";
 
 const coordinateSystem = z.enum(["WGS84", "ITRF2014", "ENU", "ECEF", "LOCAL_CHAMBER"]);
 
@@ -63,6 +64,17 @@ export const appRouter = router({
       if (!series) throw new Error("Observation series not found");
       return { seriesId: input.seriesId, source: series.source, coordinateSystem: series.coordinateSystem, metrics: compareForecastToObservations(input.forecast, series.payload as never[], series.source) };
     }),
+  }),
+  evidence: router({
+    overview: protectedProcedure.query(({ ctx }) => listEvidenceAggregates(ctx.user.id)),
+    citations: protectedProcedure.query(({ ctx }) => listSourceCitations(ctx.user.id)),
+    addCitation: protectedProcedure.input(z.object({ citationId: z.string().min(1), title: z.string().min(1), publisher: z.string().optional(), url: z.string().url(), accessedAt: z.string(), sourceType: z.enum(["primary", "secondary", "authored", "internal"]), notes: z.string().optional() })).mutation(({ input, ctx }) => createSourceCitation({ ...input, accessedAt: new Date(input.accessedAt) }, ctx.user.id)),
+    claims: protectedProcedure.query(({ ctx }) => listRoadmapClaims(ctx.user.id)),
+    reviewHistory: protectedProcedure.input(z.object({ claimId: z.string().min(1) })).query(({ input, ctx }) => listClaimReviews(input.claimId, ctx.user.id)),
+    createClaim: protectedProcedure.input(z.object({ claimId: z.string().min(1), label: z.string().min(1), value: z.string().min(1), category: z.enum(["actual", "target", "assumption", "simulation", "hypothesis", "unverified"]), citationId: z.string().optional(), evidenceNote: z.string().min(1) })).mutation(({ input, ctx }) => createRoadmapClaim(input, ctx.user.id)),
+    submitClaim: protectedProcedure.input(z.object({ claimId: z.string().min(1) })).mutation(({ input, ctx }) => submitRoadmapClaim(input.claimId, ctx.user.id)),
+    reviewClaim: protectedProcedure.input(z.object({ claimId: z.string().min(1), decision: z.enum(["approve", "reject", "request_changes"]), rationale: z.string().min(1) })).mutation(({ input, ctx }) => { if (ctx.user.role !== "admin") throw new Error("Only administrators may review roadmap claims"); return reviewRoadmapClaim({ ...input, reviewerId: ctx.user.id }); }),
+    exportDataRoom: protectedProcedure.mutation(async ({ ctx }) => { const [overview, citations, claims] = await Promise.all([listEvidenceAggregates(ctx.user.id), listSourceCitations(ctx.user.id), listRoadmapClaims(ctx.user.id)]); const payload = buildDataRoomPayload(overview, citations, claims); return createEvidenceExport(payload, ctx.user.id); }),
   }),
   predictions: router({
     recordRun: protectedProcedure.input(z.object({ runId: z.string().min(1), modelVersion: z.string().min(1), coordinateSystem, payload: z.record(z.string(), z.unknown()), uncertainty: z.number().nonnegative().optional() })).mutation(({ input, ctx }) => savePredictionRun({ ...input, createdBy: ctx.user.id })),

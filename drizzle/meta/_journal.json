@@ -50,6 +50,13 @@
       "when": 1787164180602,
       "tag": "0006_funny_quasimodo",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1787166726214,
+      "tag": "0007_condemned_mandarin",
+      "breakpoints": true
     }
   ]
 }

@@ -84,3 +84,22 @@
 - [x] Add regression tests and an end-to-end operations simulation output.
 - [x] Run type checks, production build, and visual verification.
 - [x] Push the operations expansion and save a new managed checkpoint.
+
+## Evidence and Investor Data-Room Expansion
+
+- [x] Audit persisted station, telemetry, observation, provider-snapshot, forecast, and forensic data sources for evidence aggregates.
+- [x] Add formal citation records and source provenance references.
+- [x] Add persisted roadmap claims with actual, target, assumption, hypothesis, and unverified states.
+- [x] Add authenticated claim submission, review, approval, rejection, and audit-history procedures.
+- [x] Add evidence dashboard metrics for station counts, verified observations, provider coverage, forecast accuracy, calibration, and drift.
+- [x] Add investor data-room export that separates actuals, targets, assumptions, simulations, and unverified claims.
+- [x] Add regression tests, simulation output, type checks, production build, and visual verification.
+- [ ] Push the evidence-system expansion and save a new managed checkpoint.
+
+## Evidence Completion Gaps
+
+- [x] Add protected claim-review history queries and render audit history in the evidence workflow.
+- [x] Add explicit forecast-accuracy and drift metrics to evidence aggregates and dashboard cards.
+- [x] Add a deterministic evidence/data-room simulation script with machine-readable output.
+- [x] Re-run tests, type checks, production build, and visual verification after closing the gaps.
+- [ ] Push the completed evidence system and save a new managed checkpoint.
