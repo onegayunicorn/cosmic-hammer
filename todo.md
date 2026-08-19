@@ -54,3 +54,23 @@
 - [x] Add an explicit forensic trace contract linking observation, device, signature, calibration, ingestion, persistence, verification, and dashboard rendering.
 - [x] Expand simulations for station ingestion, duplicate and missing-data detection, key rotation and revocation, drift alerts, and forensic trace generation.
 - [x] Push the vNext changes to the public repository and save a new managed checkpoint after coverage validation.
+
+## Physical Operations Expansion
+
+- [x] Audit current vNext schema, routers, renderer contracts, and heartbeat SDK boundaries.
+- [x] Add authenticated station CRUD, sensor inventory, calibration records, and station health persistence.
+- [x] Add persisted forensic trace history and protected trace query procedures.
+- [x] Add shared WebGPU capability/renderer adapter and mobile/VR scene clients using the canonical scene graph.
+- [x] Add station-management and physical-data health UI surfaces.
+- [x] Add scheduled provider snapshot, calibration-expiry, drift-check, and operator-alert handlers under /api/scheduled/.
+- [x] Add schedule ownership/task UID persistence and document deploy-before-schedule requirements.
+- [x] Simulate CRUD, forensic, renderer, schedule, calibration, and alert flows.
+- [x] Run tests, type checks, production build, and visual verification.
+- [x] Push changes and save a managed checkpoint.
+
+## Physical Operations Completion Gaps
+
+- [x] Add protected station delete and persisted sensor-inventory tables, queries, and mutations.
+- [x] Add a dedicated operator-alert scheduled callback and persist/route drift alerts.
+- [x] Expand the physical-operations simulation to cover delete, scheduled callback resolution, and owner alert routing.
+- [x] Push the physical-operations expansion and save a new managed checkpoint after final validation.

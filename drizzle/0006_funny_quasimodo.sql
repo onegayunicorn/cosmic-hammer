@@ -1,0 +1,1 @@
+ALTER TABLE `stations` ADD `operatorAlertTaskUid` varchar(65);

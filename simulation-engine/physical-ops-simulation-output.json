@@ -1,0 +1,89 @@
+{
+  "crud": {
+    "created": true,
+    "updated": true,
+    "listed": true,
+    "deleted": {
+      "stationId": "station-sim-01",
+      "deleted": true,
+      "sensorsDeleted": 2,
+      "confirmationRequired": true
+    }
+  },
+  "calibration": {
+    "registered": true,
+    "expiring": 1
+  },
+  "providerSnapshot": {
+    "persisted": true,
+    "provider": "Open-Meteo"
+  },
+  "forensic": {
+    "tracePersisted": true,
+    "terminalStatus": "verified",
+    "events": 8
+  },
+  "renderers": [
+    {
+      "platform": "webgpu",
+      "supported": false,
+      "visibleLayers": 2,
+      "timestamp": "2026-08-20T00:00:00Z",
+      "notes": [
+        "fallback-to-canvas"
+      ]
+    },
+    {
+      "platform": "mobile",
+      "supported": true,
+      "visibleLayers": 2,
+      "timestamp": "2026-08-20T00:00:00Z",
+      "notes": [
+        "reduced-layer-profile",
+        "touch-playback-ready"
+      ]
+    },
+    {
+      "platform": "vr",
+      "supported": false,
+      "visibleLayers": 2,
+      "timestamp": "2026-08-20T00:00:00Z",
+      "notes": [
+        "world-space-layer-contract",
+        "headset-runtime-optional"
+      ]
+    }
+  ],
+  "schedule": {
+    "taskUid": "task-sim-01",
+    "path": "/api/scheduled/providerSnapshot",
+    "cron": "0 0 * * * *",
+    "taskResolvedStation": "station-sim-01"
+  },
+  "operatorAlert": {
+    "route": "/api/scheduled/operatorAlert",
+    "delivered": true,
+    "persisted": true,
+    "alertId": "operator-route-station-sim-01-2026-08-20"
+  },
+  "alerts": [
+    {
+      "kind": "CALIBRATION_EXPIRY",
+      "severity": "warning",
+      "stationId": "station-sim-01",
+      "message": "1 calibration record(s) expire within 30 days for Brisbane Field Node."
+    },
+    {
+      "kind": "SNAPSHOT_STALE",
+      "severity": "warning",
+      "stationId": "station-sim-01",
+      "message": "Provider snapshot is stale for Brisbane Field Node."
+    },
+    {
+      "kind": "DRIFT_CHECK",
+      "severity": "critical",
+      "stationId": "station-sim-01",
+      "message": "Verification drift detected for Brisbane Field Node."
+    }
+  ]
+}
