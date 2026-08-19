@@ -13,12 +13,12 @@ function WorkspaceLayout() {
   const [location, setLocation] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const current = (location.replace("/", "") || "overview") as ModuleKey;
-
   const go = (key: ModuleKey) => {
     setLocation(key === "overview" ? "/" : `/${key}`);
     setMobileOpen(false);
   };
 
+  // make sure to consider if you need authentication for certain routes
   return (
     <div className="min-h-screen bg-[#071018] text-[#edf2ed] selection:bg-[#f4a261] selection:text-[#071018]">
       <div className="noise-layer" />
