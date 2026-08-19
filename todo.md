@@ -83,4 +83,4 @@
 - [x] Add an operations/investor-readiness page that separates measured telemetry, simulations, hypotheses, and roadmap claims.
 - [x] Add regression tests and an end-to-end operations simulation output.
 - [x] Run type checks, production build, and visual verification.
-- [ ] Push the operations expansion and save a new managed checkpoint.
+- [x] Push the operations expansion and save a new managed checkpoint.
