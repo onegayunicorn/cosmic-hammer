@@ -14,6 +14,6 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["server/**/*.test.ts", "server/**/*.spec.ts", "simulation-engine/tests/**/*.test.ts", "services/**/*.test.ts"],
+    include: ["server/**/*.test.ts", "server/**/*.spec.ts", "simulation-engine/tests/**/*.test.ts", "services/**/*.test.ts", "sandbox/**/*.test.ts"],
   },
 });

@@ -1,0 +1,80 @@
+{
+  "classification": "VALIDATED_SANDBOX_SIMULATION",
+  "wealth": {
+    "status": "SANDBOX_ONLY",
+    "activeStrategies": [
+      "hyperfusion_mining_concept",
+      "star_seed_staking_concept",
+      "quantum_arbitrage_concept"
+    ],
+    "financialExecution": false,
+    "estimatedApy": null,
+    "reason": "No live trading, wallet, marketplace, or wealth promises are enabled."
+  },
+  "fusion": {
+    "status": "STABLE_SIMULATION",
+    "energyLevel": 92.5,
+    "purity": 0.99,
+    "tradingSignal": "HOLD_ONLY"
+  },
+  "starSeed": {
+    "status": "SEED_CONCEPT_READY",
+    "mintReady": false,
+    "financialAction": "DISABLED"
+  },
+  "bridge": {
+    "startPoint": "Origin",
+    "endPoint": "Destination",
+    "active": 2,
+    "capacity": 3
+  },
+  "bellChain": [
+    {
+      "index": 0,
+      "rung": true
+    },
+    {
+      "index": 1,
+      "rung": true
+    },
+    {
+      "index": 2,
+      "rung": false
+    },
+    {
+      "index": 3,
+      "rung": false
+    },
+    {
+      "index": 4,
+      "rung": false
+    }
+  ],
+  "ledger": {
+    "height": 3,
+    "valid": true,
+    "latestHash": "02623c72c35acc0553e2d1841f99e488adad36c6f43a63280aa2a02ce5f1758d"
+  },
+  "governance": {
+    "approved": true,
+    "guidance": "Sandbox guidance: apply innovation, ethics, growth to roadmap prioritization."
+  },
+  "network": {
+    "network": "Cosmic Hammer Sandbox",
+    "vendors": 1,
+    "avenues": 1
+  },
+  "asset": {
+    "id": "4236ec4f413781994a832cef58630fb5e6b1c8155c3f391a00688d53d72ee0f0",
+    "name": "SANDBOX_NFT_Evolved Luminal Core",
+    "attributes": [
+      "rare",
+      "energetic",
+      "conceptual"
+    ],
+    "valueScore": null,
+    "financialExecution": false
+  },
+  "doorway": "SIMULATION_OPTIMAL",
+  "financialExecution": false
+}

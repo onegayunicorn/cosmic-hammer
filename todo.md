@@ -74,3 +74,13 @@
 - [x] Add a dedicated operator-alert scheduled callback and persist/route drift alerts.
 - [x] Expand the physical-operations simulation to cover delete, scheduled callback resolution, and owner alert routing.
 - [x] Push the physical-operations expansion and save a new managed checkpoint after final validation.
+
+## Operations PDF Expansion
+
+- [x] Extract and classify the operations PDF into evidence-backed, conceptual, sandbox-only, and investor-facing requirements.
+- [x] Add a reproducible wealth-bridge simulation for hyperfusion, bridge capacity, bell-chain sequencing, and an integrity-checked ledger.
+- [x] Add governance, vendor onboarding, doorway-state analysis, and conceptual NFT metadata modules without financial execution or fabricated value claims.
+- [x] Add an operations/investor-readiness page that separates measured telemetry, simulations, hypotheses, and roadmap claims.
+- [x] Add regression tests and an end-to-end operations simulation output.
+- [x] Run type checks, production build, and visual verification.
+- [ ] Push the operations expansion and save a new managed checkpoint.

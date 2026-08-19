@@ -1,0 +1,40 @@
+{
+  "name": "Cosmic Hammer Operation",
+  "sourceStatus": "strategic_concept",
+  "claimPolicy": "unverified_until_measured",
+  "financialExecution": false,
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Physical data dominance",
+      "months": "1-6",
+      "status": "active_contracts",
+      "deliverables": ["authenticated stations", "signed telemetry", "provider snapshots", "verification metrics", "calibration monitoring"],
+      "evidenceClass": "measured_or_contract"
+    },
+    {
+      "id": "phase-2",
+      "name": "Digital twin and 4D engine",
+      "months": "6-12",
+      "status": "adapters_ready",
+      "deliverables": ["4D scene graph", "temporal playback", "predictive simulation", "WebGPU/mobile/VR renderer contracts"],
+      "evidenceClass": "implemented_contract"
+    },
+    {
+      "id": "phase-3",
+      "name": "Global scale",
+      "months": "12-24",
+      "status": "roadmap_only",
+      "deliverables": ["developer API", "data marketplace concept", "industry solutions", "governance framework"],
+      "evidenceClass": "hypothesis"
+    }
+  ],
+  "sourcePlanMetrics": [
+    { "label": "TAM", "value": "$500B+", "status": "UNVERIFIED_SOURCE_CLAIM" },
+    { "label": "Projected capture", "value": "10%", "status": "UNVERIFIED_SOURCE_CLAIM" },
+    { "label": "Investment required", "value": "$50M", "status": "UNVERIFIED_SOURCE_CLAIM" },
+    { "label": "Projected ROI", "value": "1000x in 5 years", "status": "UNVERIFIED_SOURCE_CLAIM" },
+    { "label": "Phase 1 station target", "value": "1,000", "status": "ROADMAP_TARGET" },
+    { "label": "Phase 1 accuracy target", "value": "99.99%", "status": "ROADMAP_TARGET" }
+  ]
+}
