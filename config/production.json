@@ -1,0 +1,14 @@
+{
+  "application": "cosmic-hammer",
+  "release": "1.0.0",
+  "modelState": "simulation",
+  "externalWrites": false,
+  "financialExecution": false,
+  "physicalHardwareControl": false,
+  "requiredChecks": ["pnpm check", "pnpm test", "pnpm build", "pnpm verify:production", "pnpm audit"],
+  "deployment": {
+    "frontendArtifact": "dist/public",
+    "serverArtifact": "dist/index.js",
+    "healthPath": "/health"
+  }
+}

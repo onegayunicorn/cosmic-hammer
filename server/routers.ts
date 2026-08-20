@@ -10,6 +10,7 @@ import { compareForecastToObservations } from "./weather";
 import { fetchOpenMeteoForecast } from "./weather";
 import { validateDeviceIdentity, validateTelemetry, verifyTelemetrySignature } from "./telemetry";
 import { buildDataRoomPayload } from "../shared/evidence";
+import { runOperationsSimulation } from "../sandbox/wealth-bridge/operations-engine";
 
 const coordinateSystem = z.enum(["WGS84", "ITRF2014", "ENU", "ECEF", "LOCAL_CHAMBER"]);
 
@@ -78,6 +79,9 @@ export const appRouter = router({
   }),
   predictions: router({
     recordRun: protectedProcedure.input(z.object({ runId: z.string().min(1), modelVersion: z.string().min(1), coordinateSystem, payload: z.record(z.string(), z.unknown()), uncertainty: z.number().nonnegative().optional() })).mutation(({ input, ctx }) => savePredictionRun({ ...input, createdBy: ctx.user.id })),
+  }),
+  operations: router({
+    sandbox: publicProcedure.query(() => runOperationsSimulation()),
   }),
 });
 
