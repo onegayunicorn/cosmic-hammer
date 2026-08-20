@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import VNext from "./pages/VNext";
 import StationManagement from "./pages/StationManagement";
 import ControlCenter from "./pages/ControlCenter";
+import UnifiedPlatform from "./pages/UnifiedPlatform";
 import NotFound from "@/pages/NotFound";
 import {
   Activity,
@@ -174,6 +175,7 @@ function WorkspaceLayout() {
             <Route path={"/vnext"} component={VNext} />
             <Route path={"/stations"} component={StationManagement} />
             <Route path={"/control-center"} component={ControlCenter} />
+            <Route path={"/platform"} component={UnifiedPlatform} />
             <Route path="/:module" component={Home} />
             <Route component={NotFound} />
           </Switch>

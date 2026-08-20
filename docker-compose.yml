@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      ENVIRONMENT: integration
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    profiles: ["app"]
+
+  postgres-integration:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cosmic_test
+      POSTGRES_PASSWORD: cosmic_test
+      POSTGRES_DB: cosmic_integration
+    ports:
+      - "55432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    profiles: ["integration"]

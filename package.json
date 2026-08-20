@@ -16,6 +16,13 @@
     "audit": "pnpm audit --audit-level high",
     "simulate:operations": "tsx scripts/run-operations-simulation.ts",
     "simulate:vnext": "tsx scripts/run-vnext-simulation.ts",
+    "simulate:platform": "tsx scripts/run-platform-simulation.ts",
+    "build:packages": "tsc -p tsconfig.platform.json",
+    "verify:platform": "tsx scripts/verify-platform.ts",
+    "verify:deployment": "pnpm check && pnpm test && pnpm build && pnpm verify:production && pnpm verify:platform",
+    "docker:build": "docker build -t cosmic-hammer:local .",
+    "docker:run": "docker run --rm -p 3000:3000 -e NODE_ENV=production cosmic-hammer:local",
+    "vercel:build": "pnpm build",
     "verify:production": "node scripts/verify-production.mjs",
     "db:push": "drizzle-kit generate && drizzle-kit migrate"
   },

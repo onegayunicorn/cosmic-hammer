@@ -10,17 +10,18 @@ The application deliberately distinguishes between **hypothesis, simulation, con
 
 The current release contains a responsive mission-control shell, a public-facing hero surface, model explorer, pressure-field visualization, orbit sandbox, digital twin customizer, agents workspace, pipeline runbook, webhook event catalog, integration status cards, a read-only Sovereign SaaS ↔ ONENESS Control Center surface, and field-note documentation. The folder structure also includes explicit contracts for future Universal Driver, Digital Twin Runtime, and Sovereign Control Center adapters.
 
-| Surface            | Purpose                                                               | Current state                                 |
-| ------------------ | --------------------------------------------------------------------- | --------------------------------------------- |
-| Mission control    | Read the system posture and simulated telemetry                       | Implemented with demo data                    |
-| Pressure field     | Inspect pressure assumptions and field visualization                  | Implemented as a hypothesis explorer          |
-| Simulation sandbox | Run/resettable orbit experiments                                      | Implemented as a client-side demo             |
-| Digital twin       | Customize an avatar profile and apply a preset                        | Implemented as a visual contract              |
-| Agents             | Show solver, mapper, and operator roles                               | Implemented as a static orchestration surface |
-| Pipelines          | Visualize ingest, normalize, solve, and render stages                 | Implemented as a runbook surface              |
-| Webhooks           | Catalog event names, sources, and modes                               | Contract-only in this release                 |
-| Control Center     | Read-only Sovereign SaaS deployment visibility and governance summary | Implemented with fixture fallback             |
-| Documentation      | Explain provenance, limitations, and integration intent               | Implemented                                   |
+| Surface            | Purpose                                                                                     | Current state                                 |
+| ------------------ | ------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Mission control    | Read the system posture and simulated telemetry                                             | Implemented with demo data                    |
+| Pressure field     | Inspect pressure assumptions and field visualization                                        | Implemented as a hypothesis explorer          |
+| Simulation sandbox | Run/resettable orbit experiments                                                            | Implemented as a client-side demo             |
+| Digital twin       | Customize an avatar profile and apply a preset                                              | Implemented as a visual contract              |
+| Agents             | Show solver, mapper, and operator roles                                                     | Implemented as a static orchestration surface |
+| Pipelines          | Visualize ingest, normalize, solve, and render stages                                       | Implemented as a runbook surface              |
+| Webhooks           | Catalog event names, sources, and modes                                                     | Contract-only in this release                 |
+| Control Center     | Read-only Sovereign SaaS deployment visibility and governance summary                       | Implemented with fixture fallback             |
+| Unified Platform   | Systems registry, provenance, telemetry, twin, pipeline, governance, and simulation cockpit | Implemented with development snapshot         |
+| Documentation      | Explain provenance, limitations, and integration intent                                     | Implemented                                   |
 
 ## Source framing
 
@@ -46,6 +47,7 @@ integrations/
   universal-driver/   Driver adapter boundary and mapping notes
   digital-twin/       Character/twin profile contract
   sovereign-control/  Read-only deployment status and governance contracts
+  platform/           Unified platform dashboard and control-plane view
 simulation-engine/    Simulation concepts and numerical boundary notes
 agents/               Agent roles and orchestration notes
 pipelines/            Pipeline definitions and stage contracts
@@ -68,11 +70,14 @@ Type-check and build with:
 ```bash
 pnpm check
 pnpm build
+pnpm build:packages
+pnpm simulate:platform
+pnpm verify:platform
 ```
 
 ## Integration strategy
 
-The complete Sovereign SaaS ↔ ONENESS Control Center integration contract, governance lifecycle, authentication guidance, secret-handling rules, disposable PostgreSQL test boundary, validation matrix, troubleshooting guide, production prerequisites, and handoff ownership are documented in [`INTEGRATION_README.md`](./INTEGRATION_README.md).
+The complete Sovereign SaaS ↔ ONENESS Control Center integration contract, governance lifecycle, authentication guidance, secret-handling rules, disposable PostgreSQL test boundary, validation matrix, troubleshooting guide, production prerequisites, and handoff ownership are documented in [`INTEGRATION_README.md`](./INTEGRATION_README.md). The unified platform architecture, package build commands, simulation engine, Docker template, Compose profiles, Vercel configuration, environment strategy, and live-integration release gate are documented in [`docs/architecture/unified-platform.md`](./docs/architecture/unified-platform.md).
 
 The web release uses provider-neutral contracts rather than direct runtime dependencies. A future full-stack upgrade can attach a real Universal Driver, Digital Twin Runtime, webhook receiver, simulation worker, or analytics adapter behind these boundaries without changing the visual language.
 

@@ -11,6 +11,7 @@ export type ModuleKey =
   | "pipelines"
   | "webhooks"
   | "control-center"
+  | "platform"
   | "docs";
 
 export const navItems: Array<{
@@ -74,6 +75,12 @@ export const navItems: Array<{
     label: "Control Center",
     detail: "Read-only deployment view",
     icon: "◉",
+  },
+  {
+    key: "platform",
+    label: "Unified Platform",
+    detail: "Systems + engines",
+    icon: "⌬",
   },
   { key: "docs", label: "Field notes", detail: "Documentation", icon: "▤" },
 ];

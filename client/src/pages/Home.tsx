@@ -42,6 +42,7 @@ import {
 import { trpc } from "@/lib/trpc";
 import EvidenceDashboard from "./EvidenceDashboard";
 import ControlCenter from "./ControlCenter";
+import UnifiedPlatform from "./UnifiedPlatform";
 
 const toneClass = (tone: string) =>
   tone === "apricot"
@@ -1431,6 +1432,7 @@ export default function Home() {
         pipelines: <Pipelines />,
         webhooks: <Webhooks />,
         "control-center": <ControlCenter />,
+        platform: <UnifiedPlatform />,
         docs: <Docs />,
       })[module] ?? <Overview />,
     [module]

@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "outDir": "dist/packages",
+    "rootDir": ".",
+    "allowImportingTsExtensions": false
+  },
+  "include": [
+    "packages/contracts/src/unified.ts",
+    "packages/contracts/src/index.ts",
+    "simulation-engine/src/unified-engine.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}
