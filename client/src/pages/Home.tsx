@@ -1,37 +1,1439 @@
 // Orbital Cartography style note: data is arranged like a field instrument—offset panels, calibrated labels, solar-apricot focus, and explicit hypothesis framing.
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Activity, ArrowDownRight, ArrowUpRight, Bot, Box, Check, ChevronRight, CircleDot, Cloud, Code2, Cpu, Database, GitBranch, Globe2, Layers3, Play, RotateCcw, ShieldCheck, SlidersHorizontal, Sparkles, Terminal, UserRound, Webhook, Zap } from "lucide-react";
-import { bodies, docs, navItems, pipelineStages, pressureSeries, type ModuleKey } from "@/lib/cosmic-data";
-import { runPredictionSimulation, type PredictionRun } from "@/lib/prediction-engine";
+import {
+  Activity,
+  ArrowDownRight,
+  ArrowUpRight,
+  Bot,
+  Box,
+  Check,
+  ChevronRight,
+  CircleDot,
+  Cloud,
+  Code2,
+  Cpu,
+  Database,
+  GitBranch,
+  Globe2,
+  Layers3,
+  Play,
+  RotateCcw,
+  ShieldCheck,
+  SlidersHorizontal,
+  Sparkles,
+  Terminal,
+  UserRound,
+  Webhook,
+  Zap,
+} from "lucide-react";
+import {
+  bodies,
+  docs,
+  navItems,
+  pipelineStages,
+  pressureSeries,
+  type ModuleKey,
+} from "@/lib/cosmic-data";
+import {
+  runPredictionSimulation,
+  type PredictionRun,
+} from "@/lib/prediction-engine";
 import { trpc } from "@/lib/trpc";
 import EvidenceDashboard from "./EvidenceDashboard";
+import ControlCenter from "./ControlCenter";
 
-const toneClass = (tone: string) => tone === "apricot" ? "text-[#f4a261]" : tone === "rose" ? "text-[#e78b94]" : "text-[#73c9c2]";
+const toneClass = (tone: string) =>
+  tone === "apricot"
+    ? "text-[#f4a261]"
+    : tone === "rose"
+      ? "text-[#e78b94]"
+      : "text-[#73c9c2]";
 
-function SectionHeading({ eyebrow, title, detail, action }: { eyebrow: string; title: string; detail: string; action?: string }) { return <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><div className="mono-label mb-2 text-[#f4a261]">{eyebrow}</div><h2 className="font-display text-2xl font-semibold tracking-[-.045em] text-[#eef4ef] sm:text-[29px]">{title}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-[#84969d]">{detail}</p></div>{action && <button className="text-link shrink-0">{action}<ArrowUpRight size={14} /></button>}</div> }
-function Pulse({ label = "SIMULATION PULSE", value = "ACTIVE" }: { label?: string; value?: string }) { return <div className="flex items-center gap-2"><span className="pulse-dot" /><span className="mono-label text-[#a3b4b5]">{label}</span><span className="mono-label text-[#f4a261]">{value}</span></div> }
-function Metric({ label, value, delta, tone = "cyan" }: { label: string; value: string; delta: string; tone?: string }) { return <div className="instrument-card p-4"><div className="mb-4 flex items-center justify-between"><span className="mono-label text-[#71848e]">{label}</span><span className={`text-xs ${toneClass(tone)}`}>{delta}</span></div><div className="font-mono text-[25px] tracking-[-.06em] text-[#f0f4ef]">{value}</div><div className="mt-3 h-1 overflow-hidden rounded-full bg-white/5"><div className={`h-full rounded-full ${tone === "apricot" ? "bg-[#f4a261]" : tone === "rose" ? "bg-[#e78b94]" : "bg-[#73c9c2]"}`} style={{ width: `${tone === "rose" ? 61 : tone === "apricot" ? 68 : 84}%` }} /></div></div> }
-function MiniChart() { const points = pressureSeries.map((p, i) => `${i * 16.66},${100 - p.pressure}`).join(" "); const orbit = pressureSeries.map((p, i) => `${i * 16.66},${100 - p.orbit}`).join(" "); return <div className="relative h-[210px] overflow-hidden rounded-xl border border-white/10 bg-[#091720] p-4"><div className="absolute inset-x-4 top-4 flex justify-between"><span className="mono-label text-[#647780]">FIELD INTENSITY / 12 HRS</span><span className="mono-label text-[#73c9c2]">NORMALIZED</span></div><svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-x-4 bottom-9 top-12 h-[142px] w-[calc(100%-32px)]"><defs><linearGradient id="fieldFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#f4a261" stopOpacity=".26" /><stop offset="1" stopColor="#f4a261" stopOpacity="0" /></linearGradient></defs><path d={`M ${points} L 100 100 L 0 100 Z`} fill="url(#fieldFill)" /><polyline points={points} fill="none" stroke="#f4a261" strokeWidth="1.7" vectorEffect="non-scaling-stroke" /><polyline points={orbit} fill="none" stroke="#73c9c2" strokeWidth="1" strokeDasharray="3 3" vectorEffect="non-scaling-stroke" /></svg><div className="absolute inset-x-4 bottom-3 flex justify-between font-mono text-[10px] text-[#62757d]"><span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span></div></div> }
+function SectionHeading({
+  eyebrow,
+  title,
+  detail,
+  action,
+}: {
+  eyebrow: string;
+  title: string;
+  detail: string;
+  action?: string;
+}) {
+  return (
+    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <div className="mono-label mb-2 text-[#f4a261]">{eyebrow}</div>
+        <h2 className="font-display text-2xl font-semibold tracking-[-.045em] text-[#eef4ef] sm:text-[29px]">
+          {title}
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-[#84969d]">
+          {detail}
+        </p>
+      </div>
+      {action && (
+        <button className="text-link shrink-0">
+          {action}
+          <ArrowUpRight size={14} />
+        </button>
+      )}
+    </div>
+  );
+}
+function Pulse({
+  label = "SIMULATION PULSE",
+  value = "ACTIVE",
+}: {
+  label?: string;
+  value?: string;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="pulse-dot" />
+      <span className="mono-label text-[#a3b4b5]">{label}</span>
+      <span className="mono-label text-[#f4a261]">{value}</span>
+    </div>
+  );
+}
+function Metric({
+  label,
+  value,
+  delta,
+  tone = "cyan",
+}: {
+  label: string;
+  value: string;
+  delta: string;
+  tone?: string;
+}) {
+  return (
+    <div className="instrument-card p-4">
+      <div className="mb-4 flex items-center justify-between">
+        <span className="mono-label text-[#71848e]">{label}</span>
+        <span className={`text-xs ${toneClass(tone)}`}>{delta}</span>
+      </div>
+      <div className="font-mono text-[25px] tracking-[-.06em] text-[#f0f4ef]">
+        {value}
+      </div>
+      <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/5">
+        <div
+          className={`h-full rounded-full ${tone === "apricot" ? "bg-[#f4a261]" : tone === "rose" ? "bg-[#e78b94]" : "bg-[#73c9c2]"}`}
+          style={{
+            width: `${tone === "rose" ? 61 : tone === "apricot" ? 68 : 84}%`,
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+function MiniChart() {
+  const points = pressureSeries
+    .map((p, i) => `${i * 16.66},${100 - p.pressure}`)
+    .join(" ");
+  const orbit = pressureSeries
+    .map((p, i) => `${i * 16.66},${100 - p.orbit}`)
+    .join(" ");
+  return (
+    <div className="relative h-[210px] overflow-hidden rounded-xl border border-white/10 bg-[#091720] p-4">
+      <div className="absolute inset-x-4 top-4 flex justify-between">
+        <span className="mono-label text-[#647780]">
+          FIELD INTENSITY / 12 HRS
+        </span>
+        <span className="mono-label text-[#73c9c2]">NORMALIZED</span>
+      </div>
+      <svg
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        className="absolute inset-x-4 bottom-9 top-12 h-[142px] w-[calc(100%-32px)]"
+      >
+        <defs>
+          <linearGradient id="fieldFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#f4a261" stopOpacity=".26" />
+            <stop offset="1" stopColor="#f4a261" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path d={`M ${points} L 100 100 L 0 100 Z`} fill="url(#fieldFill)" />
+        <polyline
+          points={points}
+          fill="none"
+          stroke="#f4a261"
+          strokeWidth="1.7"
+          vectorEffect="non-scaling-stroke"
+        />
+        <polyline
+          points={orbit}
+          fill="none"
+          stroke="#73c9c2"
+          strokeWidth="1"
+          strokeDasharray="3 3"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+      <div className="absolute inset-x-4 bottom-3 flex justify-between font-mono text-[10px] text-[#62757d]">
+        <span>00:00</span>
+        <span>04:00</span>
+        <span>08:00</span>
+        <span>12:00</span>
+      </div>
+    </div>
+  );
+}
 
-function Overview() { const [, setLocation] = useLocation(); return <div className="space-y-12"><section className="hero-grid relative overflow-hidden rounded-[22px] border border-white/10"><div className="hero-art" /><div className="relative z-10 max-w-3xl px-6 py-12 sm:px-10 sm:py-16"><div className="mb-7 flex items-center gap-3"><img src="/manus-storage/cosmic-hammer-mark_a69d041a.png" alt="Cosmic Hammer solar-disc mark" className="h-12 w-12 rounded-xl bg-[#f4a261] p-2 object-contain" /><div><div className="mono-label text-[#f4a261]">COSMIC HAMMER</div><div className="mono-label text-[#748990]">ORBITAL CARTOGRAPHY / 01</div></div></div><div className="mb-6 flex flex-wrap items-center gap-3"><span className="tag tag-apricot">FIELD SYSTEM / 01</span><Pulse label="MODEL STATUS" value="HYPOTHESIS" /></div><h1 className="max-w-2xl font-display text-4xl font-semibold leading-[.98] tracking-[-.065em] text-[#f2f6ef] sm:text-[64px]">Map the pressure<br /><em className="font-serif font-normal text-[#f4a261]">you cannot see.</em></h1><p className="mt-7 max-w-xl text-[15px] leading-7 text-[#a5b3b4]">Cosmic Hammer is a visual laboratory for the invisible-pressure universe: a place to compare models, run orbit experiments, and make every assumption inspectable.</p><div className="mt-8 flex flex-wrap gap-3"><button className="button-primary" onClick={() => setLocation("/simulation")}><Play size={15} fill="currentColor" /> Run an experiment</button><button className="button-quiet" onClick={() => setLocation("/docs")}><Terminal size={15} /> Read the field notes</button></div></div><div className="absolute bottom-6 right-7 hidden max-w-[190px] text-right lg:block"><div className="mono-label mb-2 text-[#7d9295]">ORIGIN NOTE / 001</div><p className="text-xs leading-5 text-[#76898e]">The platform makes a distinction between a compelling model and an established result.</p></div></section><section><SectionHeading eyebrow="01 / Instrument readout" title="Mission control" detail="A calibrated snapshot of the current sandbox. Values below are simulated demo data until a live driver is connected." action="Open telemetry" /><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><Metric label="Pressure field" value="1.20e−18 Pa" delta="+2.8%" tone="apricot" /><Metric label="Orbit coherence" value="0.9992" delta="STABLE" /><Metric label="Twin sync" value="82.6%" delta="+6.1%" /><Metric label="Flip-flop index" value="0.24" delta="WATCH" tone="rose" /></div></section><section className="grid gap-5 xl:grid-cols-[1.4fr_.6fr]"><div className="instrument-card p-5 sm:p-6"><div className="mb-5 flex items-start justify-between"><div><div className="mono-label text-[#f4a261]">PRESSURE FIELD / PULSE</div><h3 className="mt-2 font-display text-xl tracking-[-.04em]">Invisible pressure over time</h3></div><button className="icon-button"><SlidersHorizontal size={15} /></button></div><MiniChart /><div className="mt-5 flex flex-wrap gap-5 text-xs text-[#83959a]"><span className="flex items-center gap-2"><i className="legend-dot bg-[#f4a261]" /> Pressure field</span><span className="flex items-center gap-2"><i className="legend-dot bg-[#73c9c2]" /> Orbital response</span></div></div><div className="instrument-card p-5 sm:p-6"><div className="mono-label text-[#f4a261]">CELESTIAL OBJECTS / 03</div><div className="mt-5 space-y-5">{bodies.map((body) => <div key={body.name} className="flex items-center gap-3"><span className={`grid h-9 w-9 place-items-center rounded-xl ${body.color === "apricot" ? "bg-[#f4a261]/15 text-[#f4a261]" : body.color === "rose" ? "bg-[#e78b94]/15 text-[#e78b94]" : "bg-[#73c9c2]/15 text-[#73c9c2]"}`}><CircleDot size={16} /></span><div className="min-w-0 flex-1"><div className="flex justify-between gap-2"><strong className="text-sm font-medium">{body.name}</strong><span className="font-mono text-[11px] text-[#9dafb0]">{body.pressure}</span></div><div className="mt-1 flex justify-between gap-2 text-[11px] text-[#70838b]"><span>{body.role}</span><span>{body.stability}% stable</span></div></div></div>)}</div><button className="mt-7 text-link" onClick={() => setLocation("/pressure")}>Inspect field map <ChevronRight size={14} /></button></div></section></div> }
+function Overview() {
+  const [, setLocation] = useLocation();
+  return (
+    <div className="space-y-12">
+      <section className="hero-grid relative overflow-hidden rounded-[22px] border border-white/10">
+        <div className="hero-art" />
+        <div className="relative z-10 max-w-3xl px-6 py-12 sm:px-10 sm:py-16">
+          <div className="mb-7 flex items-center gap-3">
+            <img
+              src="/manus-storage/cosmic-hammer-mark_a69d041a.png"
+              alt="Cosmic Hammer solar-disc mark"
+              className="h-12 w-12 rounded-xl bg-[#f4a261] p-2 object-contain"
+            />
+            <div>
+              <div className="mono-label text-[#f4a261]">COSMIC HAMMER</div>
+              <div className="mono-label text-[#748990]">
+                ORBITAL CARTOGRAPHY / 01
+              </div>
+            </div>
+          </div>
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <span className="tag tag-apricot">FIELD SYSTEM / 01</span>
+            <Pulse label="MODEL STATUS" value="HYPOTHESIS" />
+          </div>
+          <h1 className="max-w-2xl font-display text-4xl font-semibold leading-[.98] tracking-[-.065em] text-[#f2f6ef] sm:text-[64px]">
+            Map the pressure
+            <br />
+            <em className="font-serif font-normal text-[#f4a261]">
+              you cannot see.
+            </em>
+          </h1>
+          <p className="mt-7 max-w-xl text-[15px] leading-7 text-[#a5b3b4]">
+            Cosmic Hammer is a visual laboratory for the invisible-pressure
+            universe: a place to compare models, run orbit experiments, and make
+            every assumption inspectable.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <button
+              className="button-primary"
+              onClick={() => setLocation("/simulation")}
+            >
+              <Play size={15} fill="currentColor" /> Run an experiment
+            </button>
+            <button
+              className="button-quiet"
+              onClick={() => setLocation("/docs")}
+            >
+              <Terminal size={15} /> Read the field notes
+            </button>
+          </div>
+        </div>
+        <div className="absolute bottom-6 right-7 hidden max-w-[190px] text-right lg:block">
+          <div className="mono-label mb-2 text-[#7d9295]">
+            ORIGIN NOTE / 001
+          </div>
+          <p className="text-xs leading-5 text-[#76898e]">
+            The platform makes a distinction between a compelling model and an
+            established result.
+          </p>
+        </div>
+      </section>
+      <section>
+        <SectionHeading
+          eyebrow="01 / Instrument readout"
+          title="Mission control"
+          detail="A calibrated snapshot of the current sandbox. Values below are simulated demo data until a live driver is connected."
+          action="Open telemetry"
+        />
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <Metric
+            label="Pressure field"
+            value="1.20e−18 Pa"
+            delta="+2.8%"
+            tone="apricot"
+          />
+          <Metric label="Orbit coherence" value="0.9992" delta="STABLE" />
+          <Metric label="Twin sync" value="82.6%" delta="+6.1%" />
+          <Metric
+            label="Flip-flop index"
+            value="0.24"
+            delta="WATCH"
+            tone="rose"
+          />
+        </div>
+      </section>
+      <section className="grid gap-5 xl:grid-cols-[1.4fr_.6fr]">
+        <div className="instrument-card p-5 sm:p-6">
+          <div className="mb-5 flex items-start justify-between">
+            <div>
+              <div className="mono-label text-[#f4a261]">
+                PRESSURE FIELD / PULSE
+              </div>
+              <h3 className="mt-2 font-display text-xl tracking-[-.04em]">
+                Invisible pressure over time
+              </h3>
+            </div>
+            <button className="icon-button">
+              <SlidersHorizontal size={15} />
+            </button>
+          </div>
+          <MiniChart />
+          <div className="mt-5 flex flex-wrap gap-5 text-xs text-[#83959a]">
+            <span className="flex items-center gap-2">
+              <i className="legend-dot bg-[#f4a261]" /> Pressure field
+            </span>
+            <span className="flex items-center gap-2">
+              <i className="legend-dot bg-[#73c9c2]" /> Orbital response
+            </span>
+          </div>
+        </div>
+        <div className="instrument-card p-5 sm:p-6">
+          <div className="mono-label text-[#f4a261]">
+            CELESTIAL OBJECTS / 03
+          </div>
+          <div className="mt-5 space-y-5">
+            {bodies.map(body => (
+              <div key={body.name} className="flex items-center gap-3">
+                <span
+                  className={`grid h-9 w-9 place-items-center rounded-xl ${body.color === "apricot" ? "bg-[#f4a261]/15 text-[#f4a261]" : body.color === "rose" ? "bg-[#e78b94]/15 text-[#e78b94]" : "bg-[#73c9c2]/15 text-[#73c9c2]"}`}
+                >
+                  <CircleDot size={16} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex justify-between gap-2">
+                    <strong className="text-sm font-medium">{body.name}</strong>
+                    <span className="font-mono text-[11px] text-[#9dafb0]">
+                      {body.pressure}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex justify-between gap-2 text-[11px] text-[#70838b]">
+                    <span>{body.role}</span>
+                    <span>{body.stability}% stable</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button
+            className="mt-7 text-link"
+            onClick={() => setLocation("/pressure")}
+          >
+            Inspect field map <ChevronRight size={14} />
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
 
-function Pressure() { return <div className="space-y-10"><SectionHeading eyebrow="02 / Model explorer" title="Pressure field" detail="Adjust the source assumptions and inspect how the field responds. This view is a front-end simulation surface, not a validated scientific instrument." action="Export snapshot" /><div className="grid gap-5 xl:grid-cols-[.7fr_1.3fr]"><div className="instrument-card p-6"><div className="mono-label text-[#f4a261]">MODEL PARAMETERS</div><div className="mt-7 space-y-6"><label className="block"><span className="mb-2 flex justify-between text-sm"><span>Reference pressure P₀</span><span className="font-mono text-[#f4a261]">1e−11 Pa</span></span><input type="range" defaultValue="54" /></label><label className="block"><span className="mb-2 flex justify-between text-sm"><span>Decay exponent α</span><span className="font-mono text-[#f4a261]">2.00</span></span><input type="range" defaultValue="67" /></label><label className="block"><span className="mb-2 flex justify-between text-sm"><span>Quantum enhancement</span><span className="font-mono text-[#73c9c2]">ON</span></span><input type="range" defaultValue="82" /></label></div><div className="mt-8 rounded-xl border border-[#f4a261]/20 bg-[#f4a261]/5 p-4"><div className="flex gap-3"><ShieldCheck size={17} className="mt-0.5 shrink-0 text-[#f4a261]" /><p className="text-xs leading-5 text-[#a9b4ae]">Simulation-only state. The pressure hypothesis is presented for exploration and falsification, not as a replacement for established physics.</p></div></div></div><div className="instrument-card relative min-h-[420px] overflow-hidden p-6"><img src="/manus-storage/cosmic-hammer-pressure-field_8caad1de.png" alt="Abstract pressure field visualization" className="absolute inset-0 h-full w-full object-cover opacity-65" /><div className="absolute inset-0 bg-gradient-to-r from-[#071018] via-[#071018]/55 to-transparent" /><div className="relative z-10 max-w-xs"><div className="mono-label text-[#73c9c2]">FIELD MAP / RADIAL</div><h3 className="mt-3 font-display text-3xl tracking-[-.05em]">The force is modeled as a gradient.</h3><p className="mt-4 text-sm leading-6 text-[#a1b0af]">Explore the relationship between source distance, field intensity, and modeled orbital response.</p></div><div className="absolute bottom-6 left-6 right-6 z-10 flex items-end justify-between"><div><div className="mono-label text-[#71848d]">CURRENT VECTOR</div><div className="mt-1 font-mono text-2xl text-[#f4a261]">−2.0e−22 N</div></div><button className="button-primary"><RotateCcw size={14} /> Recalculate</button></div></div></div></div> }
+function Pressure() {
+  return (
+    <div className="space-y-10">
+      <SectionHeading
+        eyebrow="02 / Model explorer"
+        title="Pressure field"
+        detail="Adjust the source assumptions and inspect how the field responds. This view is a front-end simulation surface, not a validated scientific instrument."
+        action="Export snapshot"
+      />
+      <div className="grid gap-5 xl:grid-cols-[.7fr_1.3fr]">
+        <div className="instrument-card p-6">
+          <div className="mono-label text-[#f4a261]">MODEL PARAMETERS</div>
+          <div className="mt-7 space-y-6">
+            <label className="block">
+              <span className="mb-2 flex justify-between text-sm">
+                <span>Reference pressure P₀</span>
+                <span className="font-mono text-[#f4a261]">1e−11 Pa</span>
+              </span>
+              <input type="range" defaultValue="54" />
+            </label>
+            <label className="block">
+              <span className="mb-2 flex justify-between text-sm">
+                <span>Decay exponent α</span>
+                <span className="font-mono text-[#f4a261]">2.00</span>
+              </span>
+              <input type="range" defaultValue="67" />
+            </label>
+            <label className="block">
+              <span className="mb-2 flex justify-between text-sm">
+                <span>Quantum enhancement</span>
+                <span className="font-mono text-[#73c9c2]">ON</span>
+              </span>
+              <input type="range" defaultValue="82" />
+            </label>
+          </div>
+          <div className="mt-8 rounded-xl border border-[#f4a261]/20 bg-[#f4a261]/5 p-4">
+            <div className="flex gap-3">
+              <ShieldCheck
+                size={17}
+                className="mt-0.5 shrink-0 text-[#f4a261]"
+              />
+              <p className="text-xs leading-5 text-[#a9b4ae]">
+                Simulation-only state. The pressure hypothesis is presented for
+                exploration and falsification, not as a replacement for
+                established physics.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="instrument-card relative min-h-[420px] overflow-hidden p-6">
+          <img
+            src="/manus-storage/cosmic-hammer-pressure-field_8caad1de.png"
+            alt="Abstract pressure field visualization"
+            className="absolute inset-0 h-full w-full object-cover opacity-65"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#071018] via-[#071018]/55 to-transparent" />
+          <div className="relative z-10 max-w-xs">
+            <div className="mono-label text-[#73c9c2]">FIELD MAP / RADIAL</div>
+            <h3 className="mt-3 font-display text-3xl tracking-[-.05em]">
+              The force is modeled as a gradient.
+            </h3>
+            <p className="mt-4 text-sm leading-6 text-[#a1b0af]">
+              Explore the relationship between source distance, field intensity,
+              and modeled orbital response.
+            </p>
+          </div>
+          <div className="absolute bottom-6 left-6 right-6 z-10 flex items-end justify-between">
+            <div>
+              <div className="mono-label text-[#71848d]">CURRENT VECTOR</div>
+              <div className="mt-1 font-mono text-2xl text-[#f4a261]">
+                −2.0e−22 N
+              </div>
+            </div>
+            <button className="button-primary">
+              <RotateCcw size={14} /> Recalculate
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-function Simulation() { const [running, setRunning] = useState(false); return <div className="space-y-10"><SectionHeading eyebrow="03 / Controlled environment" title="Simulation sandbox" detail="Stage a run, change one variable, and observe the model outputs without writing to external systems." action="View run history" /><div className="grid gap-5 xl:grid-cols-[1.35fr_.65fr]"><div className="instrument-card overflow-hidden p-5 sm:p-6"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div><div className="mono-label text-[#f4a261]">ORBITAL DYNAMICS / RUN 0042</div><h3 className="mt-2 font-display text-xl">Terra / Helios equilibrium</h3></div><span className="tag tag-cyan">{running ? "RUNNING" : "READY"}</span></div><div className="simulation-stage"><div className="orbit orbit-outer" /><div className="orbit orbit-inner" /><div className="sun-core" /><div className="planet-dot" /><span className="stage-label stage-label-top">HELIOCENTRIC FRAME</span><span className="stage-label stage-label-bottom">dt = 60 s / 1.0×</span></div><div className="mt-5 flex flex-wrap gap-3"><button className="button-primary" onClick={() => setRunning(!running)}>{running ? <><span className="h-2 w-2 rounded-sm bg-current" /> Pause run</> : <><Play size={14} fill="currentColor" /> Run sandbox</>}</button><button className="button-quiet"><Code2 size={14} /> Open config</button></div></div><div className="space-y-5"><div className="instrument-card p-5"><div className="mono-label text-[#73c9c2]">RUN OUTPUT</div><div className="mt-5 space-y-4">{[["Orbital velocity", "29.78 km/s", "cyan"], ["Stability ratio", "0.92", "cyan"], ["Pressure gradient", "−2.1e−22", "apricot"], ["Uncertainty", "14.8%", "rose"]].map(([label, value, tone]) => <div key={label} className="flex items-center justify-between border-b border-white/8 pb-3 text-sm last:border-0 last:pb-0"><span className="text-[#80939a]">{label}</span><span className={`font-mono ${toneClass(tone)}`}>{value}</span></div>)}</div></div><div className="instrument-card p-5"><div className="mono-label text-[#f4a261]">SANDBOX GUARDRAILS</div><div className="mt-4 space-y-3 text-xs text-[#8ea0a3]"><div className="flex gap-2"><Check size={14} className="text-[#73c9c2]" /> No external writes</div><div className="flex gap-2"><Check size={14} className="text-[#73c9c2]" /> Resettable state</div><div className="flex gap-2"><Check size={14} className="text-[#73c9c2]" /> Exportable trace</div></div></div></div></div></div> }
+function Simulation() {
+  const [running, setRunning] = useState(false);
+  return (
+    <div className="space-y-10">
+      <SectionHeading
+        eyebrow="03 / Controlled environment"
+        title="Simulation sandbox"
+        detail="Stage a run, change one variable, and observe the model outputs without writing to external systems."
+        action="View run history"
+      />
+      <div className="grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
+        <div className="instrument-card overflow-hidden p-5 sm:p-6">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="mono-label text-[#f4a261]">
+                ORBITAL DYNAMICS / RUN 0042
+              </div>
+              <h3 className="mt-2 font-display text-xl">
+                Terra / Helios equilibrium
+              </h3>
+            </div>
+            <span className="tag tag-cyan">
+              {running ? "RUNNING" : "READY"}
+            </span>
+          </div>
+          <div className="simulation-stage">
+            <div className="orbit orbit-outer" />
+            <div className="orbit orbit-inner" />
+            <div className="sun-core" />
+            <div className="planet-dot" />
+            <span className="stage-label stage-label-top">
+              HELIOCENTRIC FRAME
+            </span>
+            <span className="stage-label stage-label-bottom">
+              dt = 60 s / 1.0×
+            </span>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              className="button-primary"
+              onClick={() => setRunning(!running)}
+            >
+              {running ? (
+                <>
+                  <span className="h-2 w-2 rounded-sm bg-current" /> Pause run
+                </>
+              ) : (
+                <>
+                  <Play size={14} fill="currentColor" /> Run sandbox
+                </>
+              )}
+            </button>
+            <button className="button-quiet">
+              <Code2 size={14} /> Open config
+            </button>
+          </div>
+        </div>
+        <div className="space-y-5">
+          <div className="instrument-card p-5">
+            <div className="mono-label text-[#73c9c2]">RUN OUTPUT</div>
+            <div className="mt-5 space-y-4">
+              {[
+                ["Orbital velocity", "29.78 km/s", "cyan"],
+                ["Stability ratio", "0.92", "cyan"],
+                ["Pressure gradient", "−2.1e−22", "apricot"],
+                ["Uncertainty", "14.8%", "rose"],
+              ].map(([label, value, tone]) => (
+                <div
+                  key={label}
+                  className="flex items-center justify-between border-b border-white/8 pb-3 text-sm last:border-0 last:pb-0"
+                >
+                  <span className="text-[#80939a]">{label}</span>
+                  <span className={`font-mono ${toneClass(tone)}`}>
+                    {value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="instrument-card p-5">
+            <div className="mono-label text-[#f4a261]">SANDBOX GUARDRAILS</div>
+            <div className="mt-4 space-y-3 text-xs text-[#8ea0a3]">
+              <div className="flex gap-2">
+                <Check size={14} className="text-[#73c9c2]" /> No external
+                writes
+              </div>
+              <div className="flex gap-2">
+                <Check size={14} className="text-[#73c9c2]" /> Resettable state
+              </div>
+              <div className="flex gap-2">
+                <Check size={14} className="text-[#73c9c2]" /> Exportable trace
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-function Prediction() { const [run, setRun] = useState<PredictionRun>(() => runPredictionSimulation()); const [seriesId, setSeriesId] = useState(""); const [submittedSeriesId, setSubmittedSeriesId] = useState(""); const liveWeather = trpc.weather.forecast.useQuery({ latitude: -27.4698, longitude: 153.0251, timezone: "Australia/Brisbane", forecastDays: 1 }); const comparisonForecast = useMemo(() => liveWeather.data?.points ?? [], [liveWeather.data]); const comparison = trpc.observations.compare.useQuery({ seriesId: submittedSeriesId, forecast: comparisonForecast }, { enabled: Boolean(submittedSeriesId && comparisonForecast.length) }); return <div className="space-y-10"><SectionHeading eyebrow="04 / Forecast instrument" title="Predictions" detail="Run a deterministic sandbox forecast for weather conditions and digital-twin position. Outputs are explicitly simulated and uncertainty-bounded." action="Export prediction trace" /><div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#f4a261]/20 bg-[#f4a261]/5 p-4"><div className="flex items-center gap-3"><span className="pulse-dot" /><div><div className="mono-label text-[#f4a261]">RUN {run.runId}</div><div className="mt-1 text-sm text-[#b8c6c1]">Model: <span className="font-mono text-xs text-[#f4a261]">{run.model}</span></div></div></div><button className="button-primary" onClick={() => setRun(runPredictionSimulation(new Date()))}><RotateCcw size={14} /> Run prediction</button></div><div className="grid gap-5 xl:grid-cols-2"><div className="instrument-card p-6"><div className="flex items-start justify-between"><div><div className="mono-label text-[#73c9c2]">WEATHER / {run.weather.location}</div><h3 className="mt-2 font-display text-2xl">{run.weather.condition.toUpperCase()} drift</h3></div><span className="tag tag-cyan">SIMULATION</span></div><div className="mt-7 grid grid-cols-2 gap-3"><Metric label="Temperature" value={`${run.weather.temperatureC}°C`} delta={`${run.weather.confidence}% conf.`} /><Metric label="Humidity" value={`${run.weather.humidity}%`} delta={`${run.weather.uncertainty}% uncertainty`} tone="apricot" /><Metric label="Pressure" value={`${run.weather.pressureHpa} hPa`} delta="MODEL OUTPUT" /><Metric label="Rain chance" value={`${run.weather.precipitationChance}%`} delta={`${run.weather.windKmh} km/h wind`} tone="rose" /></div><p className="mt-6 text-xs leading-5 text-[#82979c]">{run.weather.caveat}</p></div><div className="instrument-card p-6"><div className="flex items-start justify-between"><div><div className="mono-label text-[#f4a261]">DIGITAL TWIN / {run.digitalTwin.twinId}</div><h3 className="mt-2 font-display text-2xl">Position trace</h3></div><span className="tag tag-apricot">SANDBOX</span></div><div className="mt-7 rounded-xl border border-white/10 bg-[#08151d] p-5"><div className="mono-label text-[#71868d]">PREDICTED POSITION / M</div><div className="mt-4 grid grid-cols-3 gap-3 font-mono text-lg"><div><span className="block text-[10px] text-[#71868d]">X</span><span className="text-[#f4a261]">{run.digitalTwin.position.x}</span></div><div><span className="block text-[10px] text-[#71868d]">Y</span><span className="text-[#73c9c2]">{run.digitalTwin.position.y}</span></div><div><span className="block text-[10px] text-[#71868d]">Z</span><span className="text-[#e78b94]">{run.digitalTwin.position.z}</span></div></div><div className="mt-6 h-2 overflow-hidden rounded-full bg-white/5"><div className="h-full w-[78%] rounded-full bg-gradient-to-r from-[#73c9c2] via-[#f4a261] to-[#e78b94]" /></div><div className="mt-2 flex justify-between text-xs text-[#7d9096]"><span>Displacement</span><span className="font-mono text-[#f4a261]">{run.digitalTwin.displacement} m</span></div></div><div className="mt-5 flex justify-between text-sm"><span className="text-[#84979d]">Confidence</span><span className="font-mono text-[#73c9c2]">{run.digitalTwin.confidence}%</span></div><div className="mt-2 flex justify-between text-sm"><span className="text-[#84979d]">Position uncertainty</span><span className="font-mono text-[#e78b94]">±{run.digitalTwin.uncertaintyMeters} m</span></div><p className="mt-6 text-xs leading-5 text-[#82979c]">{run.digitalTwin.caveat}</p></div></div><div className="instrument-card p-6"><div className="flex items-start justify-between"><div><div className="mono-label text-[#73c9c2]">PROVIDER FEED / BRISBANE, AU</div><h3 className="mt-2 font-display text-xl">Open-Meteo reference</h3></div><span className={`tag ${liveWeather.isLoading ? "tag-apricot" : liveWeather.error ? "tag-rose" : "tag-cyan"}`}>{liveWeather.isLoading ? "LOADING" : liveWeather.error ? "OFFLINE" : "CONNECTED"}</span></div><p className="mt-4 text-sm leading-6 text-[#82979c]">External forecast data is shown as a reference series and is not merged into the Cosmic Hammer simulation output.</p>{liveWeather.data?.points[0] && <div className="mt-5 grid grid-cols-2 gap-3"><Metric label="Reference temperature" value={`${liveWeather.data.points[0].temperatureC ?? "—"}°C`} delta="OPEN-METEO" /><Metric label="Reference pressure" value={`${liveWeather.data.points[0].pressureHpa ?? "—"} hPa`} delta="WGS84" tone="apricot" /></div>}<a className="mt-5 inline-flex text-link" href={liveWeather.data?.attributionUrl ?? "https://open-meteo.com/"} target="_blank" rel="noreferrer">Weather data by Open-Meteo.com <ArrowUpRight size={14} /></a></div><div className="instrument-card p-6"><div className="flex items-start justify-between"><div><div className="mono-label text-[#f4a261]">FORECAST VERIFICATION</div><h3 className="mt-2 font-display text-xl">Forecast vs observation</h3></div><span className="tag tag-apricot">PAIR REQUIRED</span></div><p className="mt-4 text-sm leading-6 text-[#82979c]">Verification metrics remain unavailable until an authenticated operator attaches a physical station or clearly identified reference series.</p><div className="mt-5 grid grid-cols-3 gap-3">{[["MAE", "—"], ["RMSE", "—"], ["BIAS", "—"]].map(([label, value]) => <div className="rounded-lg border border-white/8 bg-white/[.02] p-3" key={label}><div className="mono-label text-[#71868d]">{label}</div><div className="mt-2 font-mono text-lg text-[#f4a261]">{value}</div></div>)}</div><div className="mt-4 text-xs text-[#71858c]">Paired source: <span className="font-mono">none attached</span> · Observation class: <span className="font-mono">observed</span></div></div><div className="instrument-card p-6"><div className="flex items-start justify-between"><div><div className="mono-label text-[#f4a261]">LIVE VERIFICATION QUERY</div><h3 className="mt-2 font-display text-xl">Compare attached observations</h3></div><span className={`tag ${comparison.isLoading ? "tag-apricot" : comparison.error ? "tag-rose" : comparison.data ? "tag-cyan" : "tag-apricot"}`}>{comparison.isLoading ? "QUERYING" : comparison.error ? "ERROR" : comparison.data ? "METRICS READY" : "WAITING"}</span></div><p className="mt-4 text-sm leading-6 text-[#82979c]">Enter an authenticated observation-series ID to compare the live provider forecast against persisted reference points.</p><div className="mt-4 flex gap-2"><input value={seriesId} onChange={(event) => setSeriesId(event.target.value)} placeholder="series ID" className="min-w-0 flex-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 font-mono text-xs text-[#eef4ef] outline-none" /><button className="button-primary" onClick={() => setSubmittedSeriesId(seriesId.trim())}>Compare</button></div>{comparison.data && <div className="mt-5 grid grid-cols-3 gap-3">{comparison.data.metrics.slice(0, 3).map((metric) => <div className="rounded-lg border border-white/8 bg-white/[.02] p-3" key={metric.metric}><div className="mono-label text-[#71868d]">{metric.metric.replace("C", "").replace("Hpa", "")}</div><div className="mt-2 font-mono text-sm text-[#f4a261]">MAE {metric.mae ?? "—"}</div><div className="mt-1 font-mono text-[10px] text-[#73c9c2]">RMSE {metric.rmse ?? "—"} · BIAS {metric.bias ?? "—"}</div></div>)}</div>}{comparison.data && <div className="mt-4 text-xs text-[#71858c]">Paired source: <span className="font-mono">{comparison.data.source}</span> · Frame: <span className="font-mono">{comparison.data.coordinateSystem}</span></div>}{comparison.error && <div className="mt-4 text-xs text-[#e78b94]">{comparison.error.message}</div>}</div><div className="instrument-card p-6"><div className="mono-label text-[#f4a261]">PREDICTION PIPELINE</div><div className="mt-6 grid gap-3 md:grid-cols-4">{["Inputs", "Pressure transform", "Forecast", "Uncertainty"].map((stage, index) => <div className="pipeline-row flex-col items-start" key={stage}><span className="font-mono text-xs text-[#f4a261]">0{index + 1}</span><strong className="text-sm">{stage}</strong><span className="text-xs text-[#71858c]">{index === 0 ? "baseline + signal" : index === 1 ? "deterministic" : index === 2 ? "bounded output" : "confidence trace"}</span></div>)}</div></div></div> }
+function Prediction() {
+  const [run, setRun] = useState<PredictionRun>(() =>
+    runPredictionSimulation()
+  );
+  const [seriesId, setSeriesId] = useState("");
+  const [submittedSeriesId, setSubmittedSeriesId] = useState("");
+  const liveWeather = trpc.weather.forecast.useQuery({
+    latitude: -27.4698,
+    longitude: 153.0251,
+    timezone: "Australia/Brisbane",
+    forecastDays: 1,
+  });
+  const comparisonForecast = useMemo(
+    () => liveWeather.data?.points ?? [],
+    [liveWeather.data]
+  );
+  const comparison = trpc.observations.compare.useQuery(
+    { seriesId: submittedSeriesId, forecast: comparisonForecast },
+    { enabled: Boolean(submittedSeriesId && comparisonForecast.length) }
+  );
+  return (
+    <div className="space-y-10">
+      <SectionHeading
+        eyebrow="04 / Forecast instrument"
+        title="Predictions"
+        detail="Run a deterministic sandbox forecast for weather conditions and digital-twin position. Outputs are explicitly simulated and uncertainty-bounded."
+        action="Export prediction trace"
+      />
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#f4a261]/20 bg-[#f4a261]/5 p-4">
+        <div className="flex items-center gap-3">
+          <span className="pulse-dot" />
+          <div>
+            <div className="mono-label text-[#f4a261]">RUN {run.runId}</div>
+            <div className="mt-1 text-sm text-[#b8c6c1]">
+              Model:{" "}
+              <span className="font-mono text-xs text-[#f4a261]">
+                {run.model}
+              </span>
+            </div>
+          </div>
+        </div>
+        <button
+          className="button-primary"
+          onClick={() => setRun(runPredictionSimulation(new Date()))}
+        >
+          <RotateCcw size={14} /> Run prediction
+        </button>
+      </div>
+      <div className="grid gap-5 xl:grid-cols-2">
+        <div className="instrument-card p-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="mono-label text-[#73c9c2]">
+                WEATHER / {run.weather.location}
+              </div>
+              <h3 className="mt-2 font-display text-2xl">
+                {run.weather.condition.toUpperCase()} drift
+              </h3>
+            </div>
+            <span className="tag tag-cyan">SIMULATION</span>
+          </div>
+          <div className="mt-7 grid grid-cols-2 gap-3">
+            <Metric
+              label="Temperature"
+              value={`${run.weather.temperatureC}°C`}
+              delta={`${run.weather.confidence}% conf.`}
+            />
+            <Metric
+              label="Humidity"
+              value={`${run.weather.humidity}%`}
+              delta={`${run.weather.uncertainty}% uncertainty`}
+              tone="apricot"
+            />
+            <Metric
+              label="Pressure"
+              value={`${run.weather.pressureHpa} hPa`}
+              delta="MODEL OUTPUT"
+            />
+            <Metric
+              label="Rain chance"
+              value={`${run.weather.precipitationChance}%`}
+              delta={`${run.weather.windKmh} km/h wind`}
+              tone="rose"
+            />
+          </div>
+          <p className="mt-6 text-xs leading-5 text-[#82979c]">
+            {run.weather.caveat}
+          </p>
+        </div>
+        <div className="instrument-card p-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="mono-label text-[#f4a261]">
+                DIGITAL TWIN / {run.digitalTwin.twinId}
+              </div>
+              <h3 className="mt-2 font-display text-2xl">Position trace</h3>
+            </div>
+            <span className="tag tag-apricot">SANDBOX</span>
+          </div>
+          <div className="mt-7 rounded-xl border border-white/10 bg-[#08151d] p-5">
+            <div className="mono-label text-[#71868d]">
+              PREDICTED POSITION / M
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-3 font-mono text-lg">
+              <div>
+                <span className="block text-[10px] text-[#71868d]">X</span>
+                <span className="text-[#f4a261]">
+                  {run.digitalTwin.position.x}
+                </span>
+              </div>
+              <div>
+                <span className="block text-[10px] text-[#71868d]">Y</span>
+                <span className="text-[#73c9c2]">
+                  {run.digitalTwin.position.y}
+                </span>
+              </div>
+              <div>
+                <span className="block text-[10px] text-[#71868d]">Z</span>
+                <span className="text-[#e78b94]">
+                  {run.digitalTwin.position.z}
+                </span>
+              </div>
+            </div>
+            <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/5">
+              <div className="h-full w-[78%] rounded-full bg-gradient-to-r from-[#73c9c2] via-[#f4a261] to-[#e78b94]" />
+            </div>
+            <div className="mt-2 flex justify-between text-xs text-[#7d9096]">
+              <span>Displacement</span>
+              <span className="font-mono text-[#f4a261]">
+                {run.digitalTwin.displacement} m
+              </span>
+            </div>
+          </div>
+          <div className="mt-5 flex justify-between text-sm">
+            <span className="text-[#84979d]">Confidence</span>
+            <span className="font-mono text-[#73c9c2]">
+              {run.digitalTwin.confidence}%
+            </span>
+          </div>
+          <div className="mt-2 flex justify-between text-sm">
+            <span className="text-[#84979d]">Position uncertainty</span>
+            <span className="font-mono text-[#e78b94]">
+              ±{run.digitalTwin.uncertaintyMeters} m
+            </span>
+          </div>
+          <p className="mt-6 text-xs leading-5 text-[#82979c]">
+            {run.digitalTwin.caveat}
+          </p>
+        </div>
+      </div>
+      <div className="instrument-card p-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="mono-label text-[#73c9c2]">
+              PROVIDER FEED / BRISBANE, AU
+            </div>
+            <h3 className="mt-2 font-display text-xl">Open-Meteo reference</h3>
+          </div>
+          <span
+            className={`tag ${liveWeather.isLoading ? "tag-apricot" : liveWeather.error ? "tag-rose" : "tag-cyan"}`}
+          >
+            {liveWeather.isLoading
+              ? "LOADING"
+              : liveWeather.error
+                ? "OFFLINE"
+                : "CONNECTED"}
+          </span>
+        </div>
+        <p className="mt-4 text-sm leading-6 text-[#82979c]">
+          External forecast data is shown as a reference series and is not
+          merged into the Cosmic Hammer simulation output.
+        </p>
+        {liveWeather.data?.points[0] && (
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Metric
+              label="Reference temperature"
+              value={`${liveWeather.data.points[0].temperatureC ?? "—"}°C`}
+              delta="OPEN-METEO"
+            />
+            <Metric
+              label="Reference pressure"
+              value={`${liveWeather.data.points[0].pressureHpa ?? "—"} hPa`}
+              delta="WGS84"
+              tone="apricot"
+            />
+          </div>
+        )}
+        <a
+          className="mt-5 inline-flex text-link"
+          href={liveWeather.data?.attributionUrl ?? "https://open-meteo.com/"}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Weather data by Open-Meteo.com <ArrowUpRight size={14} />
+        </a>
+      </div>
+      <div className="instrument-card p-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="mono-label text-[#f4a261]">
+              FORECAST VERIFICATION
+            </div>
+            <h3 className="mt-2 font-display text-xl">
+              Forecast vs observation
+            </h3>
+          </div>
+          <span className="tag tag-apricot">PAIR REQUIRED</span>
+        </div>
+        <p className="mt-4 text-sm leading-6 text-[#82979c]">
+          Verification metrics remain unavailable until an authenticated
+          operator attaches a physical station or clearly identified reference
+          series.
+        </p>
+        <div className="mt-5 grid grid-cols-3 gap-3">
+          {[
+            ["MAE", "—"],
+            ["RMSE", "—"],
+            ["BIAS", "—"],
+          ].map(([label, value]) => (
+            <div
+              className="rounded-lg border border-white/8 bg-white/[.02] p-3"
+              key={label}
+            >
+              <div className="mono-label text-[#71868d]">{label}</div>
+              <div className="mt-2 font-mono text-lg text-[#f4a261]">
+                {value}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 text-xs text-[#71858c]">
+          Paired source: <span className="font-mono">none attached</span> ·
+          Observation class: <span className="font-mono">observed</span>
+        </div>
+      </div>
+      <div className="instrument-card p-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="mono-label text-[#f4a261]">
+              LIVE VERIFICATION QUERY
+            </div>
+            <h3 className="mt-2 font-display text-xl">
+              Compare attached observations
+            </h3>
+          </div>
+          <span
+            className={`tag ${comparison.isLoading ? "tag-apricot" : comparison.error ? "tag-rose" : comparison.data ? "tag-cyan" : "tag-apricot"}`}
+          >
+            {comparison.isLoading
+              ? "QUERYING"
+              : comparison.error
+                ? "ERROR"
+                : comparison.data
+                  ? "METRICS READY"
+                  : "WAITING"}
+          </span>
+        </div>
+        <p className="mt-4 text-sm leading-6 text-[#82979c]">
+          Enter an authenticated observation-series ID to compare the live
+          provider forecast against persisted reference points.
+        </p>
+        <div className="mt-4 flex gap-2">
+          <input
+            value={seriesId}
+            onChange={event => setSeriesId(event.target.value)}
+            placeholder="series ID"
+            className="min-w-0 flex-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 font-mono text-xs text-[#eef4ef] outline-none"
+          />
+          <button
+            className="button-primary"
+            onClick={() => setSubmittedSeriesId(seriesId.trim())}
+          >
+            Compare
+          </button>
+        </div>
+        {comparison.data && (
+          <div className="mt-5 grid grid-cols-3 gap-3">
+            {comparison.data.metrics.slice(0, 3).map(metric => (
+              <div
+                className="rounded-lg border border-white/8 bg-white/[.02] p-3"
+                key={metric.metric}
+              >
+                <div className="mono-label text-[#71868d]">
+                  {metric.metric.replace("C", "").replace("Hpa", "")}
+                </div>
+                <div className="mt-2 font-mono text-sm text-[#f4a261]">
+                  MAE {metric.mae ?? "—"}
+                </div>
+                <div className="mt-1 font-mono text-[10px] text-[#73c9c2]">
+                  RMSE {metric.rmse ?? "—"} · BIAS {metric.bias ?? "—"}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {comparison.data && (
+          <div className="mt-4 text-xs text-[#71858c]">
+            Paired source:{" "}
+            <span className="font-mono">{comparison.data.source}</span> · Frame:{" "}
+            <span className="font-mono">
+              {comparison.data.coordinateSystem}
+            </span>
+          </div>
+        )}
+        {comparison.error && (
+          <div className="mt-4 text-xs text-[#e78b94]">
+            {comparison.error.message}
+          </div>
+        )}
+      </div>
+      <div className="instrument-card p-6">
+        <div className="mono-label text-[#f4a261]">PREDICTION PIPELINE</div>
+        <div className="mt-6 grid gap-3 md:grid-cols-4">
+          {["Inputs", "Pressure transform", "Forecast", "Uncertainty"].map(
+            (stage, index) => (
+              <div className="pipeline-row flex-col items-start" key={stage}>
+                <span className="font-mono text-xs text-[#f4a261]">
+                  0{index + 1}
+                </span>
+                <strong className="text-sm">{stage}</strong>
+                <span className="text-xs text-[#71858c]">
+                  {index === 0
+                    ? "baseline + signal"
+                    : index === 1
+                      ? "deterministic"
+                      : index === 2
+                        ? "bounded output"
+                        : "confidence trace"}
+                </span>
+              </div>
+            )
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-function Twin() { const [variant, setVariant] = useState("Aster"); return <div className="space-y-10"><SectionHeading eyebrow="04 / Embodied interface" title="Digital twin customizer" detail="Shape the operator avatar that carries context through your simulations. The customizer is a visual contract for future twin-runtime integration." action="Save as preset" /><div className="grid gap-5 xl:grid-cols-[.95fr_1.05fr]"><div className="instrument-card relative min-h-[540px] overflow-hidden"><img src="/manus-storage/cosmic-hammer-twin_b04e023b.png" alt="Digital twin astronaut engineer concept" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#071018] via-transparent to-[#071018]/20" /><div className="absolute inset-0 opacity-45" style={{backgroundImage:"linear-gradient(rgba(115,201,194,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(115,201,194,.12) 1px, transparent 1px)", backgroundSize:"42px 42px", maskImage:"linear-gradient(to bottom, black, transparent 72%)"}} /><div className="absolute left-6 right-6 top-6 flex items-center justify-between"><span className="tag tag-apricot">TWIN / UNSAVED</span><span className="mono-label text-[#c5d2cd]">ID: AST-0042</span></div><div className="absolute bottom-6 left-6"><div className="mb-2 flex items-center gap-2"><span className="mono-label text-[#73c9c2]">SIMULATED / UNVERIFIED</span><span className="h-px w-10 bg-[#73c9c2]/60" /></div><div className="mono-label text-[#f4a261]">ACTIVE PROFILE</div><div className="mt-1 font-display text-3xl tracking-[-.05em]">{variant} / Field operator</div></div></div><div className="instrument-card p-6"><div className="mono-label text-[#73c9c2]">APPEARANCE PARAMETERS</div><div className="mt-7 space-y-7"><div><div className="mb-3 text-sm text-[#aab8b5]">Identity call sign</div><div className="grid grid-cols-3 gap-2">{["Aster", "Morrow", "Nova"].map((name) => <button key={name} onClick={() => setVariant(name)} className={`choice-button ${variant === name ? "choice-button-active" : ""}`}>{name}</button>)}</div></div><div><div className="mb-3 text-sm text-[#aab8b5]">Suit material</div><div className="grid grid-cols-3 gap-2"><button className="material-swatch bg-[#2b3032]">Graphite</button><button className="material-swatch bg-[#8d6b50]">Copper</button><button className="material-swatch bg-[#4c6f73]">Moss</button></div></div><div><div className="mb-3 flex justify-between text-sm text-[#aab8b5]"><span>Pressure sensitivity</span><span className="font-mono text-[#f4a261]">74%</span></div><input type="range" defaultValue="74" /></div><div><div className="mb-3 flex justify-between text-sm text-[#aab8b5]"><span>Signal temperament</span><span className="font-mono text-[#73c9c2]">Measured</span></div><div className="h-2 overflow-hidden rounded bg-white/5"><div className="h-full w-[58%] bg-[#73c9c2]" /></div></div></div><button className="button-primary mt-8 w-full justify-center"><Sparkles size={14} /> Apply twin preset</button></div></div></div> }
+function Twin() {
+  const [variant, setVariant] = useState("Aster");
+  return (
+    <div className="space-y-10">
+      <SectionHeading
+        eyebrow="04 / Embodied interface"
+        title="Digital twin customizer"
+        detail="Shape the operator avatar that carries context through your simulations. The customizer is a visual contract for future twin-runtime integration."
+        action="Save as preset"
+      />
+      <div className="grid gap-5 xl:grid-cols-[.95fr_1.05fr]">
+        <div className="instrument-card relative min-h-[540px] overflow-hidden">
+          <img
+            src="/manus-storage/cosmic-hammer-twin_b04e023b.png"
+            alt="Digital twin astronaut engineer concept"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071018] via-transparent to-[#071018]/20" />
+          <div
+            className="absolute inset-0 opacity-45"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(115,201,194,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(115,201,194,.12) 1px, transparent 1px)",
+              backgroundSize: "42px 42px",
+              maskImage: "linear-gradient(to bottom, black, transparent 72%)",
+            }}
+          />
+          <div className="absolute left-6 right-6 top-6 flex items-center justify-between">
+            <span className="tag tag-apricot">TWIN / UNSAVED</span>
+            <span className="mono-label text-[#c5d2cd]">ID: AST-0042</span>
+          </div>
+          <div className="absolute bottom-6 left-6">
+            <div className="mb-2 flex items-center gap-2">
+              <span className="mono-label text-[#73c9c2]">
+                SIMULATED / UNVERIFIED
+              </span>
+              <span className="h-px w-10 bg-[#73c9c2]/60" />
+            </div>
+            <div className="mono-label text-[#f4a261]">ACTIVE PROFILE</div>
+            <div className="mt-1 font-display text-3xl tracking-[-.05em]">
+              {variant} / Field operator
+            </div>
+          </div>
+        </div>
+        <div className="instrument-card p-6">
+          <div className="mono-label text-[#73c9c2]">APPEARANCE PARAMETERS</div>
+          <div className="mt-7 space-y-7">
+            <div>
+              <div className="mb-3 text-sm text-[#aab8b5]">
+                Identity call sign
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {["Aster", "Morrow", "Nova"].map(name => (
+                  <button
+                    key={name}
+                    onClick={() => setVariant(name)}
+                    className={`choice-button ${variant === name ? "choice-button-active" : ""}`}
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="mb-3 text-sm text-[#aab8b5]">Suit material</div>
+              <div className="grid grid-cols-3 gap-2">
+                <button className="material-swatch bg-[#2b3032]">
+                  Graphite
+                </button>
+                <button className="material-swatch bg-[#8d6b50]">Copper</button>
+                <button className="material-swatch bg-[#4c6f73]">Moss</button>
+              </div>
+            </div>
+            <div>
+              <div className="mb-3 flex justify-between text-sm text-[#aab8b5]">
+                <span>Pressure sensitivity</span>
+                <span className="font-mono text-[#f4a261]">74%</span>
+              </div>
+              <input type="range" defaultValue="74" />
+            </div>
+            <div>
+              <div className="mb-3 flex justify-between text-sm text-[#aab8b5]">
+                <span>Signal temperament</span>
+                <span className="font-mono text-[#73c9c2]">Measured</span>
+              </div>
+              <div className="h-2 overflow-hidden rounded bg-white/5">
+                <div className="h-full w-[58%] bg-[#73c9c2]" />
+              </div>
+            </div>
+          </div>
+          <button className="button-primary mt-8 w-full justify-center">
+            <Sparkles size={14} /> Apply twin preset
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-function Agents() { return <div className="space-y-10"><SectionHeading eyebrow="05 / Orchestration layer" title="Agents & operators" detail="A readable view of the roles that interpret, solve, and render the Cosmic Hammer system. Agent execution is represented as a static contract in this release." action="Open agent graph" /><div className="grid gap-4 md:grid-cols-3">{[{name:"Pressure agent", role:"Field solver", icon:Zap, state:"CALIBRATED", color:"apricot"},{name:"Quantum agent", role:"State mapper", icon:Sparkles, state:"STANDBY", color:"cyan"},{name:"Kimi operator", role:"Narrative interface", icon:Bot, state:"READY", color:"rose"}].map(({name,role,icon:Icon,state,color}) => <div className="instrument-card p-5" key={name}><div className={`grid h-10 w-10 place-items-center rounded-xl ${color === "apricot" ? "bg-[#f4a261]/15 text-[#f4a261]" : color === "cyan" ? "bg-[#73c9c2]/15 text-[#73c9c2]" : "bg-[#e78b94]/15 text-[#e78b94]"}`}><Icon size={18} /></div><h3 className="mt-5 font-display text-lg">{name}</h3><p className="mt-1 text-xs text-[#7e9198]">{role}</p><div className="mt-7 flex items-center justify-between"><span className="mono-label text-[#6b7f87]">{state}</span><ArrowUpRight size={15} className={`text-${color === "apricot" ? "[#f4a261]" : color === "cyan" ? "[#73c9c2]" : "[#e78b94]"}`} /></div></div>)}</div><div className="instrument-card p-6"><div className="mb-6 flex items-center justify-between"><div><div className="mono-label text-[#73c9c2]">AGENT GRAPH / READ ONLY</div><h3 className="mt-2 font-display text-xl">From signal to explanation</h3></div><span className="tag tag-cyan">3 NODES</span></div><div className="grid gap-3 md:grid-cols-3">{["Sensor signal", "Pressure solver", "Operator surface"].map((label, index) => <div key={label} className="flex items-center gap-3"><div className="grid h-12 w-12 place-items-center rounded-xl border border-white/10 bg-[#0d1b23] font-mono text-[#f4a261]">0{index + 1}</div><div><strong className="block text-sm">{label}</strong><span className="text-xs text-[#73868d]">{index === 0 ? "input" : index === 1 ? "transform" : "output"}</span></div>{index < 2 && <ChevronRight className="ml-auto hidden text-[#53666e] md:block" size={18} />}</div>)}</div></div></div> }
+function Agents() {
+  return (
+    <div className="space-y-10">
+      <SectionHeading
+        eyebrow="05 / Orchestration layer"
+        title="Agents & operators"
+        detail="A readable view of the roles that interpret, solve, and render the Cosmic Hammer system. Agent execution is represented as a static contract in this release."
+        action="Open agent graph"
+      />
+      <div className="grid gap-4 md:grid-cols-3">
+        {[
+          {
+            name: "Pressure agent",
+            role: "Field solver",
+            icon: Zap,
+            state: "CALIBRATED",
+            color: "apricot",
+          },
+          {
+            name: "Quantum agent",
+            role: "State mapper",
+            icon: Sparkles,
+            state: "STANDBY",
+            color: "cyan",
+          },
+          {
+            name: "Kimi operator",
+            role: "Narrative interface",
+            icon: Bot,
+            state: "READY",
+            color: "rose",
+          },
+        ].map(({ name, role, icon: Icon, state, color }) => (
+          <div className="instrument-card p-5" key={name}>
+            <div
+              className={`grid h-10 w-10 place-items-center rounded-xl ${color === "apricot" ? "bg-[#f4a261]/15 text-[#f4a261]" : color === "cyan" ? "bg-[#73c9c2]/15 text-[#73c9c2]" : "bg-[#e78b94]/15 text-[#e78b94]"}`}
+            >
+              <Icon size={18} />
+            </div>
+            <h3 className="mt-5 font-display text-lg">{name}</h3>
+            <p className="mt-1 text-xs text-[#7e9198]">{role}</p>
+            <div className="mt-7 flex items-center justify-between">
+              <span className="mono-label text-[#6b7f87]">{state}</span>
+              <ArrowUpRight
+                size={15}
+                className={`text-${color === "apricot" ? "[#f4a261]" : color === "cyan" ? "[#73c9c2]" : "[#e78b94]"}`}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="instrument-card p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <div className="mono-label text-[#73c9c2]">
+              AGENT GRAPH / READ ONLY
+            </div>
+            <h3 className="mt-2 font-display text-xl">
+              From signal to explanation
+            </h3>
+          </div>
+          <span className="tag tag-cyan">3 NODES</span>
+        </div>
+        <div className="grid gap-3 md:grid-cols-3">
+          {["Sensor signal", "Pressure solver", "Operator surface"].map(
+            (label, index) => (
+              <div key={label} className="flex items-center gap-3">
+                <div className="grid h-12 w-12 place-items-center rounded-xl border border-white/10 bg-[#0d1b23] font-mono text-[#f4a261]">
+                  0{index + 1}
+                </div>
+                <div>
+                  <strong className="block text-sm">{label}</strong>
+                  <span className="text-xs text-[#73868d]">
+                    {index === 0
+                      ? "input"
+                      : index === 1
+                        ? "transform"
+                        : "output"}
+                  </span>
+                </div>
+                {index < 2 && (
+                  <ChevronRight
+                    className="ml-auto hidden text-[#53666e] md:block"
+                    size={18}
+                  />
+                )}
+              </div>
+            )
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-function Pipelines() { return <div className="space-y-10"><SectionHeading eyebrow="06 / Runbooks" title="Pipelines" detail="Compose repeatable flows from sensor ingest to visual output. The UI is ready for a backend runner when one is connected." action="Create pipeline" /><div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]"><div className="instrument-card p-6"><div className="flex items-center justify-between"><div><div className="mono-label text-[#f4a261]">PIPELINE / COSMIC-ORBIT-01</div><h3 className="mt-2 font-display text-xl">Orbit validation loop</h3></div><span className="tag tag-apricot">DRAFT</span></div><div className="mt-8 space-y-2">{pipelineStages.map((stage, i) => <div key={stage.label} className="pipeline-row"><span className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 font-mono text-xs text-[#f4a261]">0{i + 1}</span><div className="min-w-0 flex-1"><div className="mb-1 flex justify-between text-sm"><span>{stage.label}</span><span className={`font-mono text-xs ${toneClass(stage.tone)}`}>{stage.value}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-white/5"><div className={`h-full rounded-full ${stage.tone === "apricot" ? "bg-[#f4a261]" : stage.tone === "rose" ? "bg-[#e78b94]" : "bg-[#73c9c2]"}`} style={{width:`${stage.value}%`}} /></div></div></div>)}</div><button className="button-quiet mt-8"><GitBranch size={14} /> Inspect graph</button></div><div className="instrument-card p-6"><div className="mono-label text-[#73c9c2]">INTEGRATION SURFACE</div><div className="mt-5 space-y-3">{[{icon:Globe2,label:"Universal Driver",status:"adapter contract"},{icon:UserRound,label:"Digital Twin Runtime",status:"customizer ready"},{icon:Database,label:"SimilarWeb Analytics",status:"research hook"}].map(({icon:Icon,label,status})=><div className="flex items-center gap-3 rounded-xl border border-white/8 bg-white/[.02] p-3" key={label}><Icon size={16} className="text-[#f4a261]" /><span className="flex-1 text-sm">{label}</span><span className="mono-label text-[#70858c]">{status}</span></div>)}</div><div className="mt-6 rounded-xl border border-[#73c9c2]/15 bg-[#73c9c2]/5 p-4 text-xs leading-5 text-[#91aaa8]">Adapters are intentionally provider-neutral. Connect a real driver only after reviewing the contract in <span className="font-mono text-[#73c9c2]">/docs/contracts</span>.</div></div></div></div> }
+function Pipelines() {
+  return (
+    <div className="space-y-10">
+      <SectionHeading
+        eyebrow="06 / Runbooks"
+        title="Pipelines"
+        detail="Compose repeatable flows from sensor ingest to visual output. The UI is ready for a backend runner when one is connected."
+        action="Create pipeline"
+      />
+      <div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
+        <div className="instrument-card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="mono-label text-[#f4a261]">
+                PIPELINE / COSMIC-ORBIT-01
+              </div>
+              <h3 className="mt-2 font-display text-xl">
+                Orbit validation loop
+              </h3>
+            </div>
+            <span className="tag tag-apricot">DRAFT</span>
+          </div>
+          <div className="mt-8 space-y-2">
+            {pipelineStages.map((stage, i) => (
+              <div key={stage.label} className="pipeline-row">
+                <span className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 font-mono text-xs text-[#f4a261]">
+                  0{i + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="mb-1 flex justify-between text-sm">
+                    <span>{stage.label}</span>
+                    <span
+                      className={`font-mono text-xs ${toneClass(stage.tone)}`}
+                    >
+                      {stage.value}%
+                    </span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
+                    <div
+                      className={`h-full rounded-full ${stage.tone === "apricot" ? "bg-[#f4a261]" : stage.tone === "rose" ? "bg-[#e78b94]" : "bg-[#73c9c2]"}`}
+                      style={{ width: `${stage.value}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button className="button-quiet mt-8">
+            <GitBranch size={14} /> Inspect graph
+          </button>
+        </div>
+        <div className="instrument-card p-6">
+          <div className="mono-label text-[#73c9c2]">INTEGRATION SURFACE</div>
+          <div className="mt-5 space-y-3">
+            {[
+              {
+                icon: Globe2,
+                label: "Universal Driver",
+                status: "adapter contract",
+              },
+              {
+                icon: UserRound,
+                label: "Digital Twin Runtime",
+                status: "customizer ready",
+              },
+              {
+                icon: Database,
+                label: "SimilarWeb Analytics",
+                status: "research hook",
+              },
+            ].map(({ icon: Icon, label, status }) => (
+              <div
+                className="flex items-center gap-3 rounded-xl border border-white/8 bg-white/[.02] p-3"
+                key={label}
+              >
+                <Icon size={16} className="text-[#f4a261]" />
+                <span className="flex-1 text-sm">{label}</span>
+                <span className="mono-label text-[#70858c]">{status}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 rounded-xl border border-[#73c9c2]/15 bg-[#73c9c2]/5 p-4 text-xs leading-5 text-[#91aaa8]">
+            Adapters are intentionally provider-neutral. Connect a real driver
+            only after reviewing the contract in{" "}
+            <span className="font-mono text-[#73c9c2]">/docs/contracts</span>.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-function Webhooks() { return <div className="space-y-10"><SectionHeading eyebrow="07 / Event surface" title="Webhooks" detail="A catalog of the events that let sensors, pipelines, agents, and the twin runtime stay coordinated." action="Register endpoint" /><div className="instrument-card overflow-hidden"><div className="grid grid-cols-[1.25fr_.8fr_.5fr] border-b border-white/10 px-5 py-3 mono-label text-[#687c84] sm:px-6"><span>Event</span><span>Source</span><span>Mode</span></div>{[{event:"pressure.field.updated",source:"Pressure engine",mode:"SIM"},{event:"simulation.run.completed",source:"Sandbox",mode:"SIM"},{event:"twin.profile.applied",source:"Digital twin",mode:"LOCAL"},{event:"pipeline.stage.failed",source:"Orchestrator",mode:"ALERT"}].map((row)=><div key={row.event} className="grid grid-cols-[1.25fr_.8fr_.5fr] items-center border-b border-white/8 px-5 py-5 last:border-0 sm:px-6"><div className="flex items-center gap-3"><span className="grid h-8 w-8 place-items-center rounded-lg bg-[#f4a261]/10 text-[#f4a261]"><Webhook size={15} /></span><span className="font-mono text-xs text-[#d2ded8]">{row.event}</span></div><span className="text-xs text-[#83959a]">{row.source}</span><span className={`mono-label ${row.mode === "ALERT" ? "text-[#e78b94]" : "text-[#73c9c2]"}`}>{row.mode}</span></div>)}</div><div className="grid gap-4 md:grid-cols-3"><div className="instrument-card p-5"><div className="mono-label text-[#f4a261]">DELIVERY POLICY</div><div className="mt-4 text-2xl font-display">At-least-once</div><p className="mt-2 text-xs leading-5 text-[#82949b]">Retries and signatures belong in the backend adapter layer.</p></div><div className="instrument-card p-5"><div className="mono-label text-[#73c9c2]">SIGNED PAYLOADS</div><div className="mt-4 text-2xl font-display">HMAC / SHA256</div><p className="mt-2 text-xs leading-5 text-[#82949b]">Contract placeholder for future endpoint verification.</p></div><div className="instrument-card p-5"><div className="mono-label text-[#e78b94]">CURRENT ENDPOINTS</div><div className="mt-4 text-2xl font-display">0 connected</div><p className="mt-2 text-xs leading-5 text-[#82949b]">This static release does not send or receive external events.</p></div></div></div> }
+function Webhooks() {
+  return (
+    <div className="space-y-10">
+      <SectionHeading
+        eyebrow="07 / Event surface"
+        title="Webhooks"
+        detail="A catalog of the events that let sensors, pipelines, agents, and the twin runtime stay coordinated."
+        action="Register endpoint"
+      />
+      <div className="instrument-card overflow-hidden">
+        <div className="grid grid-cols-[1.25fr_.8fr_.5fr] border-b border-white/10 px-5 py-3 mono-label text-[#687c84] sm:px-6">
+          <span>Event</span>
+          <span>Source</span>
+          <span>Mode</span>
+        </div>
+        {[
+          {
+            event: "pressure.field.updated",
+            source: "Pressure engine",
+            mode: "SIM",
+          },
+          { event: "simulation.run.completed", source: "Sandbox", mode: "SIM" },
+          {
+            event: "twin.profile.applied",
+            source: "Digital twin",
+            mode: "LOCAL",
+          },
+          {
+            event: "pipeline.stage.failed",
+            source: "Orchestrator",
+            mode: "ALERT",
+          },
+        ].map(row => (
+          <div
+            key={row.event}
+            className="grid grid-cols-[1.25fr_.8fr_.5fr] items-center border-b border-white/8 px-5 py-5 last:border-0 sm:px-6"
+          >
+            <div className="flex items-center gap-3">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#f4a261]/10 text-[#f4a261]">
+                <Webhook size={15} />
+              </span>
+              <span className="font-mono text-xs text-[#d2ded8]">
+                {row.event}
+              </span>
+            </div>
+            <span className="text-xs text-[#83959a]">{row.source}</span>
+            <span
+              className={`mono-label ${row.mode === "ALERT" ? "text-[#e78b94]" : "text-[#73c9c2]"}`}
+            >
+              {row.mode}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="instrument-card p-5">
+          <div className="mono-label text-[#f4a261]">DELIVERY POLICY</div>
+          <div className="mt-4 text-2xl font-display">At-least-once</div>
+          <p className="mt-2 text-xs leading-5 text-[#82949b]">
+            Retries and signatures belong in the backend adapter layer.
+          </p>
+        </div>
+        <div className="instrument-card p-5">
+          <div className="mono-label text-[#73c9c2]">SIGNED PAYLOADS</div>
+          <div className="mt-4 text-2xl font-display">HMAC / SHA256</div>
+          <p className="mt-2 text-xs leading-5 text-[#82949b]">
+            Contract placeholder for future endpoint verification.
+          </p>
+        </div>
+        <div className="instrument-card p-5">
+          <div className="mono-label text-[#e78b94]">CURRENT ENDPOINTS</div>
+          <div className="mt-4 text-2xl font-display">0 connected</div>
+          <p className="mt-2 text-xs leading-5 text-[#82949b]">
+            This static release does not send or receive external events.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-function Operations() { const rows = [{ label: "Physical truth", value: "Measured telemetry", state: "MEASURED", tone: "cyan", detail: "Signed devices, calibration records, provider snapshots, and forensic traces." }, { label: "Operations engine", value: "Sandbox verified", state: "SIMULATION", tone: "apricot", detail: "Hyperfusion, bridge, bell-chain, ledger, governance, vendor, and doorway flows." }, { label: "Universal scale", value: "Roadmap hypothesis", state: "HYPOTHESIS", tone: "rose", detail: "The source plan proposes global station, provider, twin, and ecosystem expansion." }, { label: "Investor metrics", value: "Not independently verified", state: "UNVERIFIED", tone: "rose", detail: "Market size, ROI, revenue, accuracy, and adoption targets remain source-plan claims." }]; return <div className="space-y-10"><SectionHeading eyebrow="09 / Operations readiness" title="The operation, made inspectable" detail="A clear separation between measured telemetry, validated sandbox behavior, hypotheses, and unverified source-plan claims." action="Open operation map" /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">{rows.map((row) => <div className="instrument-card p-5" key={row.label}><div className={`mono-label ${toneClass(row.tone)}`}>{row.state}</div><h3 className="mt-5 font-display text-xl tracking-[-.04em]">{row.value}</h3><div className="mt-3 text-sm text-[#b7c5c0]">{row.label}</div><p className="mt-3 text-xs leading-5 text-[#82979c]">{row.detail}</p></div>)}</div><div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]"><div className="instrument-card p-6"><div className="mono-label text-[#f4a261]">PHASE MAP / SOURCE PLAN</div><div className="mt-6 space-y-4">{[{ phase: "01", title: "Physical data dominance", status: "ACTIVE CONTRACTS", detail: "Stations, signed telemetry, providers, verification and calibration." }, { phase: "02", title: "Digital twin & 4D engine", status: "ADAPTERS READY", detail: "Scene graph, temporal playback, predictive simulation and render clients." }, { phase: "03", title: "Global scale", status: "ROADMAP ONLY", detail: "Developer ecosystem, vertical solutions and governance remain future work." }].map((phase) => <div className="flex gap-4 border-b border-white/8 pb-4 last:border-0 last:pb-0" key={phase.phase}><span className="font-mono text-[#f4a261]">{phase.phase}</span><div className="min-w-0 flex-1"><div className="flex flex-wrap justify-between gap-2"><strong className="text-sm">{phase.title}</strong><span className="mono-label text-[#73c9c2]">{phase.status}</span></div><p className="mt-2 text-xs leading-5 text-[#82979c]">{phase.detail}</p></div></div>)}</div></div><div className="instrument-card p-6"><div className="mono-label text-[#73c9c2]">GUARDRAILS / INVESTOR SURFACE</div><h3 className="mt-4 font-display text-2xl tracking-[-.04em]">No promises. Full traceability.</h3><div className="mt-5 space-y-3 text-sm text-[#a6b4b1]"><div className="flex gap-2"><Check size={15} className="mt-0.5 text-[#73c9c2]" /> No financial execution</div><div className="flex gap-2"><Check size={15} className="mt-0.5 text-[#73c9c2]" /> No fabricated returns or reviews</div><div className="flex gap-2"><Check size={15} className="mt-0.5 text-[#73c9c2]" /> Source claims visibly labeled</div><div className="flex gap-2"><Check size={15} className="mt-0.5 text-[#73c9c2]" /> Evidence and simulations separated</div></div><p className="mt-6 text-xs leading-5 text-[#82979c]">The operations PDF is a strategic narrative. This surface turns its architecture into inspectable software boundaries without representing its projections as achieved results.</p></div></div></div> }
+function Operations() {
+  const rows = [
+    {
+      label: "Physical truth",
+      value: "Measured telemetry",
+      state: "MEASURED",
+      tone: "cyan",
+      detail:
+        "Signed devices, calibration records, provider snapshots, and forensic traces.",
+    },
+    {
+      label: "Operations engine",
+      value: "Sandbox verified",
+      state: "SIMULATION",
+      tone: "apricot",
+      detail:
+        "Hyperfusion, bridge, bell-chain, ledger, governance, vendor, and doorway flows.",
+    },
+    {
+      label: "Universal scale",
+      value: "Roadmap hypothesis",
+      state: "HYPOTHESIS",
+      tone: "rose",
+      detail:
+        "The source plan proposes global station, provider, twin, and ecosystem expansion.",
+    },
+    {
+      label: "Investor metrics",
+      value: "Not independently verified",
+      state: "UNVERIFIED",
+      tone: "rose",
+      detail:
+        "Market size, ROI, revenue, accuracy, and adoption targets remain source-plan claims.",
+    },
+  ];
+  return (
+    <div className="space-y-10">
+      <SectionHeading
+        eyebrow="09 / Operations readiness"
+        title="The operation, made inspectable"
+        detail="A clear separation between measured telemetry, validated sandbox behavior, hypotheses, and unverified source-plan claims."
+        action="Open operation map"
+      />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {rows.map(row => (
+          <div className="instrument-card p-5" key={row.label}>
+            <div className={`mono-label ${toneClass(row.tone)}`}>
+              {row.state}
+            </div>
+            <h3 className="mt-5 font-display text-xl tracking-[-.04em]">
+              {row.value}
+            </h3>
+            <div className="mt-3 text-sm text-[#b7c5c0]">{row.label}</div>
+            <p className="mt-3 text-xs leading-5 text-[#82979c]">
+              {row.detail}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
+        <div className="instrument-card p-6">
+          <div className="mono-label text-[#f4a261]">
+            PHASE MAP / SOURCE PLAN
+          </div>
+          <div className="mt-6 space-y-4">
+            {[
+              {
+                phase: "01",
+                title: "Physical data dominance",
+                status: "ACTIVE CONTRACTS",
+                detail:
+                  "Stations, signed telemetry, providers, verification and calibration.",
+              },
+              {
+                phase: "02",
+                title: "Digital twin & 4D engine",
+                status: "ADAPTERS READY",
+                detail:
+                  "Scene graph, temporal playback, predictive simulation and render clients.",
+              },
+              {
+                phase: "03",
+                title: "Global scale",
+                status: "ROADMAP ONLY",
+                detail:
+                  "Developer ecosystem, vertical solutions and governance remain future work.",
+              },
+            ].map(phase => (
+              <div
+                className="flex gap-4 border-b border-white/8 pb-4 last:border-0 last:pb-0"
+                key={phase.phase}
+              >
+                <span className="font-mono text-[#f4a261]">{phase.phase}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <strong className="text-sm">{phase.title}</strong>
+                    <span className="mono-label text-[#73c9c2]">
+                      {phase.status}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-[#82979c]">
+                    {phase.detail}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="instrument-card p-6">
+          <div className="mono-label text-[#73c9c2]">
+            GUARDRAILS / INVESTOR SURFACE
+          </div>
+          <h3 className="mt-4 font-display text-2xl tracking-[-.04em]">
+            No promises. Full traceability.
+          </h3>
+          <div className="mt-5 space-y-3 text-sm text-[#a6b4b1]">
+            <div className="flex gap-2">
+              <Check size={15} className="mt-0.5 text-[#73c9c2]" /> No financial
+              execution
+            </div>
+            <div className="flex gap-2">
+              <Check size={15} className="mt-0.5 text-[#73c9c2]" /> No
+              fabricated returns or reviews
+            </div>
+            <div className="flex gap-2">
+              <Check size={15} className="mt-0.5 text-[#73c9c2]" /> Source
+              claims visibly labeled
+            </div>
+            <div className="flex gap-2">
+              <Check size={15} className="mt-0.5 text-[#73c9c2]" /> Evidence and
+              simulations separated
+            </div>
+          </div>
+          <p className="mt-6 text-xs leading-5 text-[#82979c]">
+            The operations PDF is a strategic narrative. This surface turns its
+            architecture into inspectable software boundaries without
+            representing its projections as achieved results.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-function Docs() { return <div className="space-y-10"><SectionHeading eyebrow="08 / Field notes" title="Documentation" detail="The source material, system architecture, and integration contracts behind the interface—kept close to the instrument." action="Open README" /><div className="grid gap-4 lg:grid-cols-3">{docs.map((doc) => <article className="instrument-card p-6" key={doc.title}><div className="flex items-center justify-between"><span className="tag tag-cyan">{doc.type}</span><span className="mono-label text-[#f4a261]">{doc.status}</span></div><h3 className="mt-6 font-display text-xl tracking-[-.04em]">{doc.title}</h3><p className="mt-3 text-sm leading-6 text-[#8da0a5]">{doc.text}</p><button className="mt-7 text-link">Read note <ChevronRight size={14} /></button></article>)}</div><div className="instrument-card overflow-hidden p-6 sm:p-8"><div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-center"><div><div className="mono-label text-[#f4a261]">SOURCE PROVENANCE</div><h3 className="mt-3 font-display text-3xl tracking-[-.05em]">A hypothesis deserves a visible audit trail.</h3></div><div className="space-y-4 text-sm leading-7 text-[#9aabad]"><p>The Cosmic Hammer materials are presented here as an authored speculative framework. The application helps visualize assumptions, compare model states, and stage experiments without declaring the underlying theory proven.</p><p>Read the repository documentation for the folder map, adapter contracts, simulation notes, and the research hooks used to evaluate future public-facing deployments.</p></div></div></div></div> }
+function Docs() {
+  return (
+    <div className="space-y-10">
+      <SectionHeading
+        eyebrow="08 / Field notes"
+        title="Documentation"
+        detail="The source material, system architecture, and integration contracts behind the interface—kept close to the instrument."
+        action="Open README"
+      />
+      <div className="grid gap-4 lg:grid-cols-3">
+        {docs.map(doc => (
+          <article className="instrument-card p-6" key={doc.title}>
+            <div className="flex items-center justify-between">
+              <span className="tag tag-cyan">{doc.type}</span>
+              <span className="mono-label text-[#f4a261]">{doc.status}</span>
+            </div>
+            <h3 className="mt-6 font-display text-xl tracking-[-.04em]">
+              {doc.title}
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-[#8da0a5]">{doc.text}</p>
+            <button className="mt-7 text-link">
+              Read note <ChevronRight size={14} />
+            </button>
+          </article>
+        ))}
+      </div>
+      <div className="instrument-card overflow-hidden p-6 sm:p-8">
+        <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
+          <div>
+            <div className="mono-label text-[#f4a261]">SOURCE PROVENANCE</div>
+            <h3 className="mt-3 font-display text-3xl tracking-[-.05em]">
+              A hypothesis deserves a visible audit trail.
+            </h3>
+          </div>
+          <div className="space-y-4 text-sm leading-7 text-[#9aabad]">
+            <p>
+              The Cosmic Hammer materials are presented here as an authored
+              speculative framework. The application helps visualize
+              assumptions, compare model states, and stage experiments without
+              declaring the underlying theory proven.
+            </p>
+            <p>
+              Read the repository documentation for the folder map, adapter
+              contracts, simulation notes, and the research hooks used to
+              evaluate future public-facing deployments.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-export default function Home() { const [location] = useLocation(); const module = (location.replace("/", "") || "overview") as ModuleKey; const content = useMemo(() => ({ overview: <Overview />, pressure: <Pressure />, simulation: <Simulation />, prediction: <Prediction />, twin: <Twin />, operations: <Operations />, evidence: <EvidenceDashboard />, agents: <Agents />, pipelines: <Pipelines />, webhooks: <Webhooks />, docs: <Docs /> }[module] ?? <Overview />), [module]); return <>{content}</>; }
+export default function Home() {
+  const [location] = useLocation();
+  const module = (location.replace("/", "") || "overview") as ModuleKey;
+  const content = useMemo(
+    () =>
+      ({
+        overview: <Overview />,
+        pressure: <Pressure />,
+        simulation: <Simulation />,
+        prediction: <Prediction />,
+        twin: <Twin />,
+        operations: <Operations />,
+        evidence: <EvidenceDashboard />,
+        agents: <Agents />,
+        pipelines: <Pipelines />,
+        webhooks: <Webhooks />,
+        "control-center": <ControlCenter />,
+        docs: <Docs />,
+      })[module] ?? <Overview />,
+    [module]
+  );
+  return <>{content}</>;
+}

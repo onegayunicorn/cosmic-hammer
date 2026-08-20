@@ -1,0 +1,27 @@
+{
+  "integration": "sovereign-saas-oneness-control-center",
+  "mode": "read-only",
+  "controlApiPath": "/api/deployments/status/:projectId",
+  "fixtureFallback": {
+    "localDevelopment": true,
+    "staging": false,
+    "production": false
+  },
+  "browserCapabilities": [
+    "read_status",
+    "filter",
+    "share_url",
+    "display_health",
+    "display_audit_summary"
+  ],
+  "forbiddenBrowserCapabilities": [
+    "approve",
+    "activate",
+    "deploy",
+    "rollback",
+    "read_credentials",
+    "mutate_project"
+  ],
+  "serverAuthority": true,
+  "externalWrites": false
+}
