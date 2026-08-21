@@ -1,0 +1,10 @@
+architect_typecheck=0
+architect_unit=0
+architect_lumina=0
+hammer_check=0
+hammer_test=0
+hammer_build=0
+hammer_lumina=0
+security=0
+hygiene_a=0
+hygiene_h=0

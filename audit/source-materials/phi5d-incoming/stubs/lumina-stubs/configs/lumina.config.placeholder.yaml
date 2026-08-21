@@ -1,0 +1,9 @@
+# PLACEHOLDER — replace values before any deployment.
+core:
+  anchor_frequency_hz: null
+  coherence_threshold: null
+agents: []
+connectors:
+  ble: null
+  nfc: null
+  uart: null

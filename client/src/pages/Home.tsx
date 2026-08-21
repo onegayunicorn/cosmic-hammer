@@ -35,6 +35,10 @@ import {
   pressureSeries,
   type ModuleKey,
 } from "@/lib/cosmic-data";
+import LuminaCamera from "./LuminaCamera";
+import NarrativeBuilder from "./NarrativeBuilder";
+import TranslationMatrix from "./TranslationMatrix";
+import CompassShard from "./CompassShard";
 import {
   runPredictionSimulation,
   type PredictionRun,
@@ -1436,6 +1440,10 @@ export default function Home() {
         platform: <UnifiedPlatform />,
         "cosmic-camera": <CosmicCamera />,
         docs: <Docs />,
+        "lumina-camera": <LuminaCamera />,
+        "narrative-builder": <NarrativeBuilder />,
+        "translation-matrix": <TranslationMatrix />,
+        "compass-shard": <CompassShard />,
       })[module] ?? <Overview />,
     [module]
   );

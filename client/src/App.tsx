@@ -11,6 +11,10 @@ import StationManagement from "./pages/StationManagement";
 import ControlCenter from "./pages/ControlCenter";
 import UnifiedPlatform from "./pages/UnifiedPlatform";
 import CosmicCamera from "./pages/CosmicCamera";
+import LuminaCamera from "./pages/LuminaCamera";
+import NarrativeBuilder from "./pages/NarrativeBuilder";
+import TranslationMatrix from "./pages/TranslationMatrix";
+import CompassShard from "./pages/CompassShard";
 import NotFound from "@/pages/NotFound";
 import {
   Activity,
@@ -178,6 +182,10 @@ function WorkspaceLayout() {
             <Route path={"/control-center"} component={ControlCenter} />
             <Route path={"/platform"} component={UnifiedPlatform} />
             <Route path={"/cosmic-camera"} component={CosmicCamera} />
+            <Route path={"/lumina-camera"} component={LuminaCamera} />
+            <Route path={"/narrative-builder"} component={NarrativeBuilder} />
+            <Route path={"/translation-matrix"} component={TranslationMatrix} />
+            <Route path={"/compass-shard"} component={CompassShard} />
             <Route path="/:module" component={Home} />
             <Route component={NotFound} />
           </Switch>

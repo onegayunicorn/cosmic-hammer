@@ -13,7 +13,11 @@ export type ModuleKey =
   | "control-center"
   | "platform"
   | "cosmic-camera"
-  | "docs";
+  | "docs"
+  | "lumina-camera"
+  | "narrative-builder"
+  | "translation-matrix"
+  | "compass-shard";
 
 export const navItems: Array<{
   key: ModuleKey;
@@ -90,6 +94,10 @@ export const navItems: Array<{
     icon: "◍",
   },
   { key: "docs", label: "Field notes", detail: "Documentation", icon: "▤" },
+  { key: "lumina-camera", label: "Lumina camera", detail: "Live simulated view", icon: "◉" },
+  { key: "narrative-builder", label: "Narrative builder", detail: "Physical software story", icon: "✎" },
+  { key: "translation-matrix", label: "Translation matrix", detail: "Symbols to code", icon: "⇄" },
+  { key: "compass-shard", label: "Compass + shard", detail: "J09 adapter model", icon: "◇" },
 ];
 
 export const pressureSeries = [

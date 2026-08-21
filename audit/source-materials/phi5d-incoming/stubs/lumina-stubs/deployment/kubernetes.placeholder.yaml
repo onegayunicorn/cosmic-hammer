@@ -1,0 +1,9 @@
+# PLACEHOLDER — production Kubernetes manifests must be authored and security-reviewed.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lumina-placeholder
+  labels:
+    status: placeholder
+data:
+  STATUS: STUB
