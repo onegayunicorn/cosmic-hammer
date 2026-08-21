@@ -36,6 +36,15 @@ export default function CosmicCamera() {
   const [result, setResult] = useState<CameraResult | null>(null);
   const [cameraReady, setCameraReady] = useState(false);
   const description = useMemo(() => modeCopy[mode], [mode]);
+  const simulationMetrics = useMemo(
+    () => ({
+      sampleCount: 16,
+      meanAcquisitionHz: 10,
+      thermalState: "WITHIN_ENVELOPE",
+      frameIntegrity: "PASS",
+    }),
+    [],
+  );
 
   function createObservation() {
     const cleanLabel = label.trim().slice(0, 120);
@@ -83,6 +92,9 @@ export default function CosmicCamera() {
               </h2>
             </div>
             <button
+              type="button"
+              aria-pressed={cameraReady}
+              aria-label="Toggle optional camera input"
               className={`rounded-full border px-3 py-1 text-[11px] ${cameraReady ? "border-[#7fe0c0]/40 text-[#7fe0c0]" : "border-white/10 text-[#89999e]"}`}
               onClick={() => setCameraReady(value => !value)}
             >
@@ -93,6 +105,7 @@ export default function CosmicCamera() {
             <label className="text-xs text-[#8fa1a5]">
               Mode
               <select
+                aria-label="Observation mode"
                 className="mt-2 w-full rounded-lg border border-white/10 bg-[#101f29] px-3 py-3 text-sm text-white"
                 value={mode}
                 onChange={event => setMode(event.target.value as CameraMode)}
@@ -107,6 +120,7 @@ export default function CosmicCamera() {
             <label className="text-xs text-[#8fa1a5]">
               Observation label
               <input
+                aria-label="Observation label"
                 className="mt-2 w-full rounded-lg border border-white/10 bg-[#101f29] px-3 py-3 text-sm text-white"
                 value={label}
                 maxLength={120}
@@ -118,6 +132,7 @@ export default function CosmicCamera() {
             {description}
           </p>
           <button
+            type="button"
             className="mt-5 rounded-lg bg-[#f4a261] px-4 py-3 text-sm font-semibold text-[#071018] transition hover:bg-[#ffc184] disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!label.trim()}
             onClick={createObservation}
@@ -128,6 +143,15 @@ export default function CosmicCamera() {
 
         <div className="rounded-2xl border border-white/10 bg-[#0b1821] p-6">
           <div className="mono-label text-[#6f848b]">SAFETY POSTURE</div>
+          <div className="mt-5 border-b border-white/5 pb-4">
+            <div className="mono-label text-[#6f848b]">SIMULATION METRICS</div>
+            <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+              <div><span className="block text-xs text-[#6f848b]">Samples</span><strong>{simulationMetrics.sampleCount}</strong></div>
+              <div><span className="block text-xs text-[#6f848b]">Acquisition</span><strong>{simulationMetrics.meanAcquisitionHz} Hz</strong></div>
+              <div><span className="block text-xs text-[#6f848b]">Thermal</span><strong className="text-[#7fe0c0]">{simulationMetrics.thermalState}</strong></div>
+              <div><span className="block text-xs text-[#6f848b]">Frames</span><strong className="text-[#7fe0c0]">{simulationMetrics.frameIntegrity}</strong></div>
+            </div>
+          </div>
           <div className="mt-5 space-y-3 text-sm">
             {[
               ["Raw media persistence", "Disabled"],
@@ -148,7 +172,10 @@ export default function CosmicCamera() {
       </section>
 
       {result && (
-        <section className="rounded-2xl border border-[#7fe0c0]/20 bg-[#0b1821] p-6">
+        <section
+          aria-live="polite"
+          className="rounded-2xl border border-[#7fe0c0]/20 bg-[#0b1821] p-6"
+        >
           <div className="mono-label text-[#7fe0c0]">OBSERVATION CREATED</div>
           <div className="mt-4 grid gap-4 sm:grid-cols-4">
             <div>

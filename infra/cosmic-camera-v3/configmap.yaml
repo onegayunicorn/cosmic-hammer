@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: cosmic-camera-config, namespace: cosmic-camera}
+data:
+  NODE_ENV: production
+  RAW_MEDIA_PERSISTENCE: "false"
+  HARDWARE_CONTROL_ENABLED: "false"

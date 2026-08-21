@@ -1,0 +1,8 @@
+services:
+  cosmic-camera:
+    build: {context: ../..}
+    environment:
+      NODE_ENV: production
+      RAW_MEDIA_PERSISTENCE: "false"
+      HARDWARE_CONTROL_ENABLED: "false"
+    ports: ["8080:8080"]

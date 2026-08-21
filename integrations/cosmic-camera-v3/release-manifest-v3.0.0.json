@@ -1,0 +1,23 @@
+{
+  "name": "cosmic-camera-production-increment",
+  "version": "3.0.0",
+  "softwareStatus": "release-candidate",
+  "hardwareStatus": "verification-gated",
+  "externalDeploymentExecuted": false,
+  "rawMediaPersistenceDefault": false,
+  "hardwareControlDefault": false,
+  "validationStatus": "passed",
+  "securityFindings": {
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "provenance": "SIMULATION",
+  "evidence": [
+    "audit/07_V3_VALIDATION.md",
+    "audit/evidence/security/cross-repository-static-audit.json",
+    "audit/evidence/validation-v3-final/"
+  ],
+  "physicalMeasurementStatus": "unverified",
+  "productionDeploymentStatus": "unverified"
+}

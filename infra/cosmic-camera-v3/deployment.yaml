@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: cosmic-camera, namespace: cosmic-camera}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: cosmic-camera}}
+  template:
+    metadata: {labels: {app: cosmic-camera}}
+    spec:
+      containers:
+      - name: app
+        image: ghcr.io/onegayunicorn/cosmic-camera:3.0.0
+        ports: [{containerPort: 8080}]
+        envFrom: [{configMapRef: {name: cosmic-camera-config}}]
+        readinessProbe: {httpGet: {path: /ready, port: 8080}}
+        livenessProbe: {httpGet: {path: /health, port: 8080}}

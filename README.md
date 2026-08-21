@@ -102,3 +102,7 @@ This repository is scaffolded for private development and public review. Add the
 - [Consumer onboarding guide](docs/onboarding/cosmic-camera-consumer-guide.md)
 - [Defensive security audit](audit/05_SECURITY_AUDIT.md)
 - Run the cross-repository static audit from Architect Orchestrator with `node scripts/security/audit-repositories.mjs`.
+
+- [Cosmic Camera v3 production build plan](docs/production-increment-v3/PRODUCTION_BUILD_PLAN.md)
+
+- [Cosmic Camera v3 validation evidence](audit/07_V3_VALIDATION.md)

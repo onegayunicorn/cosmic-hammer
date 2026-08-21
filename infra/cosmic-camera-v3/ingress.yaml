@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata: {name: cosmic-camera, namespace: cosmic-camera}
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: camera.example.invalid
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend: {service: {name: cosmic-camera, port: {number: 80}}}

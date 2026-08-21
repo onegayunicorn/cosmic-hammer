@@ -1,0 +1,2 @@
+export interface TecController{setDuty(duty:number):Promise<void>;readTemperature():Promise<number>}
+export class SafeTecLoop{constructor(private t:TecController,private min=-20,private max=60){}async regulate(target:number){if(target<this.min||target>this.max)throw Error("target outside thermal envelope");const temp=await this.t.readTemperature();const duty=Math.max(0,Math.min(1,.1+(target-temp)*.05));await this.t.setDuty(duty);return duty}}

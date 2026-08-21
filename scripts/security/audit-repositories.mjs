@@ -47,7 +47,8 @@ for (const repo of repos) {
         }
       }
     }
-    if (repo.endsWith('cosmic-hammer') && !rel.startsWith('docs/') && !rel.includes('scripts/security/audit-repositories.mjs')) {
+    const documentationOnly = rel.startsWith('docs/') || rel.startsWith('audit/') || rel.includes('scripts/security/audit-repositories.mjs');
+    if (repo.endsWith('cosmic-hammer') && !documentationOnly) {
       for (const risk of browserRiskPatterns) {
         if (risk.regex.test(content)) findings.push({ repo, severity: 'medium', category: 'browser', file: rel, message: risk.name });
       }

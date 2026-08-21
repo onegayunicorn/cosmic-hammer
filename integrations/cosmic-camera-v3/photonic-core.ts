@@ -1,0 +1,5 @@
+export type Provenance = "CAPTURED"|"SIMULATED"|"DERIVED";
+export interface Photon {id:string; wavelengthNm:number; frequencyHz:number; amplitude:number; phaseRad:number; polarization:"linear"|"circular"|"elliptical"; x:number;y:number;z:number;timestamp:string;provenance:Provenance}
+export function wavelengthToFrequency(nm:number){if(nm<=0)throw new Error("wavelength must be positive");return 299792458/(nm*1e-9)}
+export function photonToLux(p:Photon){return Math.min(1,p.frequencyHz/1e15)*.4+p.amplitude*.4+Math.abs(Math.cos(p.phaseRad))*.2}
+export function pnpAdmm(y:number[],iterations=20,tolerance=1e-6){let z=y.slice(),u=y.map(()=>0);for(let k=0;k<iterations;k++){const x=z.map((v,i)=>v-u[i]);const next=x.slice();u=u.map((v,i)=>v+x[i]-next[i]);const r=Math.sqrt(u.reduce((s,v)=>s+v*v,0));if(r<tolerance)return{image:next,iterations:k+1,residual:r,converged:true,provenance:"REFERENCE" as const};z=next}return{image:z,iterations,residual:Math.sqrt(u.reduce((s,v)=>s+v*v,0)),converged:false,provenance:"REFERENCE" as const}}

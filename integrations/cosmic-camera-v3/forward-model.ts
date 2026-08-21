@@ -1,0 +1,2 @@
+export function poissonSample(lambda:number,seed:number){if(lambda<0)throw Error("lambda must be non-negative");let s=seed>>>0,p=1,k=0;const t=Math.exp(-lambda);while(p>t&&k<100000){s=(1664525*s+1013904223)>>>0;p*=((s+1)/4294967296);k++}return Math.max(0,k-1)}
+export function applyPsf(signal:number[],kernel:number[]){return signal.map((_,i)=>kernel.reduce((sum,v,j)=>sum+(signal[i+j-(kernel.length>>1)]??0)*v,0))}
