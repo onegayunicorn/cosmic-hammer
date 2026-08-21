@@ -1,0 +1,19 @@
+CC = g++
+CFLAGS = -Wall -O3 -std=c++17
+PYTHON = python3
+
+.PHONY: all core test clean
+
+all: core
+
+core: core/main.cpp
+	mkdir -p build
+	$(CC) $(CFLAGS) core/main.cpp -o build/cosmic_core
+
+test:
+	@echo "Running Cosmic Camera v3.0.0 Dry-Run for Samsung Galaxy A17 Ω..."
+	@$(PYTHON) sim/simulator.py --nodes 50 --dry-run
+	@echo "Simulation successful."
+
+clean:
+	rm -rf build
