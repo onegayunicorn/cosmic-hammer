@@ -1,0 +1,1329 @@
+V3.0.0 Dual-Agent Release Operations
+
+Architect Orchestrator + Cosmic Camera
+
+Operating Model: Simulation → Integration → Staging → Hardware → Live Validation
+
+Release boundary: V3.0.0
+Primary objective: Convert the existing release-gate dialogue into an executable two-agent operating system capable of coordinating, verifying, documenting, and advancing every release process without allowing simulated evidence to be represented as physical evidence.
+
+---
+
+1. Operating Principle
+
+The platform operates as two cooperating but independently accountable agents.
+
+Agent 1 — RELEASE GOVERNOR
+
+Mission: Decide whether a release is allowed to advance.
+
+Responsibilities:
+
+- repository and branch inspection
+- requirements decomposition
+- provenance enforcement
+- development-gate verification
+- integration-gate verification
+- staging-gate verification
+- security audit verification
+- API/schema verification
+- CI/CD release-gate verification
+- evidence collection
+- hardware-gate review
+- live-gate authorization
+- rollback authorization
+- release manifest generation
+- immutable audit trail
+- final PASS / HOLD / BLOCK decision
+
+Agent 1 must never manufacture evidence.
+
+It can declare:
+
+- "PASS"
+- "HOLD"
+- "BLOCK"
+- "UNVERIFIED"
+- "ROLLBACK_REQUIRED"
+
+It cannot convert "SIMULATED" into "MEASURED".
+
+---
+
+Agent 2 — VALIDATION ENGINEER
+
+Mission: Execute the technical work required to produce evidence.
+
+Responsibilities:
+
+- run builds
+- run typechecks
+- run unit/integration tests
+- execute deterministic simulations
+- perform API contract validation
+- build containers
+- execute dependency/security scans
+- perform static analysis
+- prepare hardware test plans
+- interrogate approved hardware
+- collect sensor telemetry
+- perform calibration procedures
+- execute acquisition tests
+- execute FPGA simulation/synthesis/HIL procedures
+- compare FPGA output against Python reference implementation
+- validate timestamps
+- validate device identity
+- publish evidence packages
+- report failures to Agent 1
+- execute remediation tasks
+- repeat failed gates
+
+Agent 2 must never self-authorize a release.
+
+---
+
+2. Separation of Authority
+
+The agents intentionally have asymmetric authority.
+
+Capability| Release Governor| Validation Engineer
+Inspect repositories| YES| YES
+Modify implementation| REVIEW/REQUEST| YES
+Run tests| YES| YES
+Run simulations| YES| YES
+Generate evidence| VERIFY| PRODUCE
+Mark provenance| VERIFY| ASSIGN
+Security remediation| APPROVE| EXECUTE
+Hardware control| AUTHORIZE| EXECUTE
+Raw-media persistence| AUTHORIZE| EXECUTE
+Production deployment| AUTHORIZE| PREPARE
+Release decision| YES| NO
+Rollback decision| YES| EXECUTE
+Override failed evidence| NO| NO
+Convert simulation to measurement| NO| NO
+
+The release system therefore has a two-key principle:
+
+«Agent 2 produces technical evidence.
+Agent 1 verifies that evidence and authorizes progression.»
+
+Neither agent can bypass provenance.
+
+---
+
+3. Shared Release State
+
+Both agents consume the same machine-readable release state.
+
+RELEASE
+  └── V3.0.0
+       ├── development
+       ├── integration
+       ├── staging
+       ├── security
+       ├── hardware
+       │    ├── H1 sensor
+       │    ├── H2 thermal
+       │    ├── H3 optical
+       │    ├── H4 acquisition
+       │    ├── H5 FPGA/HIL
+       │    └── H6 reconstruction parity
+       ├── live
+       ├── provenance
+       ├── deployment
+       └── rollback
+
+Every gate has:
+
+gate_id
+status
+owner
+timestamp
+commit_sha
+build_id
+test_id
+device_id
+environment
+provenance
+measurements
+expected_values
+actual_values
+tolerance
+evidence_uri
+reviewer
+decision
+
+---
+
+4. Provenance Model
+
+Every data object must contain an explicit provenance class.
+
+SIMULATED
+RECONSTRUCTED
+MEASURED
+DERIVED
+REFERENCE
+UNKNOWN
+
+Rules
+
+"SIMULATED"
+
+Generated entirely by software models.
+
+"RECONSTRUCTED"
+
+Produced by an algorithm operating on recorded or supplied data.
+
+"MEASURED"
+
+Directly obtained from approved physical instrumentation.
+
+"DERIVED"
+
+Calculated from measured/reconstructed data.
+
+"REFERENCE"
+
+Known-good baseline used for comparison.
+
+"UNKNOWN"
+
+Evidence is unusable for release authorization.
+
+Hard rule
+
+SIMULATED != MEASURED
+RECONSTRUCTED != MEASURED
+UNKNOWN != EVIDENCE
+
+A release gate requiring physical evidence automatically fails if its evidence provenance is anything other than "MEASURED" or an explicitly approved derived form.
+
+---
+
+5. Agent 1 — RELEASE GOVERNOR Operating Loop
+
+INTAKE
+  ↓
+DISCOVER
+  ↓
+MAP REQUIREMENTS
+  ↓
+INSPECT CURRENT STATE
+  ↓
+VERIFY DEVELOPMENT
+  ↓
+VERIFY INTEGRATION
+  ↓
+VERIFY SECURITY
+  ↓
+VERIFY STAGING
+  ↓
+REQUEST HARDWARE VALIDATION
+  ↓
+REVIEW H1–H6
+  ↓
+REQUEST LIVE VALIDATION
+  ↓
+VERIFY LIVE TELEMETRY
+  ↓
+VERIFY DIGITAL TWIN PARITY
+  ↓
+AUTHORIZE RELEASE
+
+At every transition:
+
+IF evidence valid
+    advance
+ELSE IF remediation possible
+    create remediation task
+ELSE
+    HOLD/BLOCK
+
+The Governor continuously asks:
+
+1. What claim is being made?
+2. What evidence supports the claim?
+3. Where did that evidence originate?
+4. Is the evidence reproducible?
+5. Is the evidence within tolerance?
+6. Has another environment independently verified it?
+7. Is the physical device actually involved?
+8. Can the result be audited later?
+
+---
+
+6. Agent 2 — VALIDATION ENGINEER Operating Loop
+
+RECEIVE TASK
+  ↓
+INSPECT ENVIRONMENT
+  ↓
+PREPARE TEST
+  ↓
+EXECUTE
+  ↓
+CAPTURE RAW RESULT
+  ↓
+CLASSIFY PROVENANCE
+  ↓
+VALIDATE RESULT
+  ↓
+GENERATE EVIDENCE
+  ↓
+SIGN EVIDENCE
+  ↓
+SUBMIT TO GOVERNOR
+
+The Engineer never reports:
+
+«"H4 passed"»
+
+without also providing:
+
+device_id
+firmware_version
+software_commit
+timestamp_source
+test_configuration
+raw-data reference
+measurement
+expected range
+tolerance
+result
+provenance
+evidence hash
+
+---
+
+7. Development Gate — D1
+
+Required
+
+- TypeScript/typecheck
+- Python type/static validation where applicable
+- lint
+- unit tests
+- deterministic test harness
+- reproducible dependency installation
+- build success
+- no unexplained test failures
+
+Agent 2 executes
+
+install
+typecheck
+lint
+unit tests
+deterministic harness
+production build
+
+Agent 1 verifies
+
+BUILD = PASS
+TYPECHECK = PASS
+UNIT = PASS
+LINT = PASS
+DETERMINISM = PASS
+
+Failure:
+
+D1 = BLOCK
+
+---
+
+8. Integration Gate — I1
+
+Agent 2 validates:
+
+- cross-repository interfaces
+- REST/API contracts
+- WebSocket/MQTT contracts
+- event schemas
+- Digital Twin interfaces
+- Orchestrator interfaces
+- Cosmic Camera interfaces
+- telemetry schemas
+- authentication
+- provenance propagation
+
+Agent 1 verifies:
+
+- schema compatibility
+- version compatibility
+- provenance preservation
+- error semantics
+- timeout behavior
+- retry behavior
+- idempotency
+
+Required condition:
+
+ALL CONTRACTS = VALID
+ALL REQUIRED INTEGRATIONS = PASS
+PROVENANCE = PRESERVED
+
+---
+
+9. Security Gate — S1
+
+The security gate is mandatory.
+
+Required result:
+
+HIGH = 0
+MEDIUM = 0
+LOW = 0
+
+Required checks include:
+
+- static analysis
+- dependency vulnerability scan
+- secret scanning
+- unsafe HTML injection detection
+- authentication review
+- authorization review
+- webhook-secret handling
+- environment-secret handling
+- container scanning
+- dependency lock verification
+- exposed endpoint review
+- logging/privacy review
+
+Secrets must come from environment-backed secret management.
+
+Never:
+
+commit secrets
+embed secrets in frontend bundles
+hardcode webhook credentials
+store production credentials in test fixtures
+
+---
+
+10. Staging Gate — ST1
+
+Agent 2 creates the production-equivalent staging environment.
+
+Required:
+
+- container build
+- image provenance
+- dependency lock
+- runtime configuration
+- health checks
+- readiness checks
+- migration rehearsal
+- rollback rehearsal
+- observability
+- audit logging
+- API smoke tests
+- failure injection
+
+Agent 1 verifies:
+
+BUILD reproducible
+DEPLOYMENT reproducible
+ROLLBACK proven
+HEALTH proven
+SECURITY proven
+AUDIT proven
+
+---
+
+11. Hardware Boundary
+
+The software release may reach:
+
+SOFTWARE PASS
+
+while the hardware release remains:
+
+HARDWARE HOLD
+
+This is intentional.
+
+The two states must never be collapsed.
+
+SOFTWARE_RELEASE = PASS
+PHYSICAL_VALIDATION = HOLD
+OVERALL_RELEASE = HOLD
+
+---
+
+12. H1 — Sensor Identity and Characteristics
+
+Agent 2 verifies:
+
+- device identity
+- serial/device identifier
+- sensor model
+- firmware
+- quantum efficiency
+- read noise
+- dark current
+- full-well capacity
+- operating range
+- calibration metadata
+
+Evidence must originate from:
+
+approved_device
++
+approved_measurement
+
+not simulation.
+
+Agent 1 checks:
+
+DEVICE_ID verified
+CALIBRATION verified
+MEASUREMENTS present
+PROVENANCE = MEASURED
+TOLERANCES = PASS
+
+---
+
+13. H2 — Thermal Stability
+
+Agent 2 executes controlled thermal tests.
+
+Capture:
+
+temperature
+time
+sensor response
+dark current
+noise
+device state
+ambient conditions
+
+Evaluate:
+
+thermal drift
+settling time
+operating envelope
+repeatability
+
+Agent 1 verifies that the observed operating envelope satisfies the release specification.
+
+---
+
+14. H3 — Optical Validation
+
+Agent 2 executes optical characterization.
+
+Required measurements:
+
+- focus
+- distortion
+- field of view
+- point spread function
+- optical alignment
+- repeatability
+
+The result must distinguish:
+
+MODELLED OPTICS
+
+from:
+
+MEASURED OPTICS
+
+Only the latter can close H3.
+
+---
+
+15. H4 — Acquisition and Timestamp Integrity
+
+Agent 2 validates:
+
+sensor
+ ↓
+acquisition layer
+ ↓
+timestamp
+ ↓
+transport
+ ↓
+Orchestrator
+ ↓
+Digital Twin
+
+Verify:
+
+- packet integrity
+- frame integrity
+- sequence numbering
+- timestamp monotonicity
+- clock synchronization
+- dropped frames
+- duplicated frames
+- latency
+- transport reliability
+
+Required:
+
+RAW ACQUISITION = VALID
+TIMESTAMP INTEGRITY = VALID
+TELEMETRY = RECEIVED
+
+---
+
+16. H5 — FPGA Validation
+
+H5 consists of three layers.
+
+H5-A — FPGA simulation
+
+Validate RTL behavior against expected vectors.
+
+H5-B — synthesis
+
+Validate:
+
+- synthesis success
+- timing constraints
+- resource utilization
+- clocking
+- reset behavior
+- bitstream generation
+
+H5-C — hardware-in-loop
+
+Connect the approved FPGA target to the validation environment.
+
+Capture:
+
+device_id
+bitstream_hash
+firmware
+test_vector
+input
+output
+timestamp
+error
+
+Agent 1 only closes H5 when all required layers pass.
+
+---
+
+17. H6 — Reconstruction Parity
+
+The reference implementation is the Python reconstruction pipeline.
+
+Agent 2 feeds identical test vectors through:
+
+REFERENCE PYTHON
+
+and:
+
+FPGA IMPLEMENTATION
+
+Compare:
+
+output vectors
+numerical error
+timing
+edge cases
+overflow/underflow behavior
+quantization effects
+
+The release specification supplies the tolerance.
+
+Example:
+
+abs(FPGA - PYTHON) <= approved_tolerance
+
+If the tolerance is not formally specified:
+
+H6 = UNVERIFIED
+
+not PASS.
+
+---
+
+18. Live Integration Gate — L1
+
+The live gate requires all of the following:
+
+- approved device handshake
+- authenticated connection
+- device identity verification
+- live telemetry
+- Orchestrator reception
+- dashboard reception
+- Digital Twin Runtime active
+- audit event generated
+- provenance preserved
+- health monitoring active
+- emergency disable path verified
+
+Data flow:
+
+PHYSICAL DEVICE
+      ↓
+ACQUISITION
+      ↓
+EDGE/TRANSPORT
+      ↓
+ORCHESTRATOR
+      ↓
+DIGITAL TWIN RUNTIME
+      ↓
+DASHBOARD
+      ↓
+AUDIT SYSTEM
+
+Agent 2 proves the path.
+
+Agent 1 authorizes the transition.
+
+---
+
+19. Controlled Parity Loop
+
+Once live data is available:
+
+MEASURED INPUT
+       ↓
+   LIVE SYSTEM
+       ↓
+ DIGITAL TWIN
+       ↓
+REFERENCE MODEL
+       ↓
+COMPARISON
+
+The system compares:
+
+measured
+vs
+reconstructed
+vs
+simulated
+
+without conflating their provenance.
+
+Every discrepancy becomes a structured event:
+
+PARITY_EVENT
+├── measurement_id
+├── simulation_id
+├── reconstruction_id
+├── device_id
+├── timestamp
+├── metric
+├── expected
+├── actual
+├── delta
+├── tolerance
+├── provenance
+└── decision
+
+---
+
+20. Raw Media Safety Boundary
+
+Default state:
+
+RAW_MEDIA_PERSISTENCE = DISABLED
+HARDWARE_CONTROL = DISABLED
+
+These capabilities can only be enabled after the appropriate authorization gate.
+
+The symbolic "obsidian shard" concept may exist in documentation or narrative UX as:
+
+RELEASE_AUTHORIZATION_SYMBOL
+
+but it has zero evidentiary authority.
+
+It cannot:
+
+- substitute for calibration
+- generate sensor measurements
+- satisfy H1–H6
+- prove hardware operation
+- authorize unsafe physical control
+- override failed gates
+
+---
+
+21. Agent-to-Agent Protocol
+
+The agents communicate through signed structured messages.
+
+TASK
+
+{
+  "type": "TASK",
+  "release": "3.0.0",
+  "gate": "H4",
+  "objective": "Validate acquisition and timestamp integrity",
+  "required_provenance": ["MEASURED"],
+  "authority": "validation-engineer"
+}
+
+EVIDENCE
+
+{
+  "type": "EVIDENCE",
+  "release": "3.0.0",
+  "gate": "H4",
+  "status": "PASS",
+  "provenance": "MEASURED",
+  "device_id": "...",
+  "test_id": "...",
+  "measurement_ref": "...",
+  "evidence_hash": "...",
+  "timestamp": "..."
+}
+
+REVIEW
+
+{
+  "type": "REVIEW",
+  "release": "3.0.0",
+  "gate": "H4",
+  "decision": "PASS",
+  "reviewed_by": "release-governor",
+  "evidence_hash": "..."
+}
+
+BLOCK
+
+{
+  "type": "BLOCK",
+  "release": "3.0.0",
+  "gate": "H4",
+  "reason": "Timestamp integrity could not be independently verified",
+  "required_action": "Repeat acquisition test"
+}
+
+---
+
+22. Shared Artifact Registry
+
+Create the following release structure:
+
+release/
+└── v3.0.0/
+    ├── manifest/
+    │   ├── release.json
+    │   ├── gates.json
+    │   └── provenance.json
+    │
+    ├── requirements/
+    │   └── acceptance-criteria.yaml
+    │
+    ├── development/
+    │   ├── typecheck.json
+    │   ├── tests.json
+    │   └── build.json
+    │
+    ├── integration/
+    │   ├── api-contracts.json
+    │   ├── integration-tests.json
+    │   └── provenance-tests.json
+    │
+    ├── security/
+    │   ├── sast.json
+    │   ├── dependency-scan.json
+    │   ├── secret-scan.json
+    │   └── security-attestation.json
+    │
+    ├── staging/
+    │   ├── container-attestation.json
+    │   ├── smoke-tests.json
+    │   └── rollback-test.json
+    │
+    ├── hardware/
+    │   ├── H1/
+    │   ├── H2/
+    │   ├── H3/
+    │   ├── H4/
+    │   ├── H5/
+    │   └── H6/
+    │
+    ├── live/
+    │   ├── handshake.json
+    │   ├── telemetry.json
+    │   ├── audit-event.json
+    │   └── parity.json
+    │
+    └── signatures/
+        ├── evidence.sig
+        └── release.sig
+
+---
+
+23. Release Manifest
+
+release: v3.0.0
+
+software:
+  development: UNVERIFIED
+  integration: UNVERIFIED
+  security: UNVERIFIED
+  staging: UNVERIFIED
+
+hardware:
+  H1_sensor: UNVERIFIED
+  H2_thermal: UNVERIFIED
+  H3_optical: UNVERIFIED
+  H4_acquisition: UNVERIFIED
+  H5_fpga_hil: UNVERIFIED
+  H6_reconstruction_parity: UNVERIFIED
+
+live:
+  device_handshake: UNVERIFIED
+  telemetry: UNVERIFIED
+  orchestrator: UNVERIFIED
+  dashboard: UNVERIFIED
+  digital_twin: UNVERIFIED
+  audit_event: UNVERIFIED
+
+controls:
+  hardware_control: DISABLED
+  raw_media_persistence: DISABLED
+
+overall:
+  status: HOLD
+  provenance_required: true
+
+The initial state must always be conservative.
+
+---
+
+24. Automated Gate Engine
+
+Implement a common evaluator:
+
+evaluate_gate(gate_id, evidence)
+
+Decision logic:
+
+if evidence_missing:
+    UNVERIFIED
+
+elif provenance_invalid:
+    BLOCK
+
+elif required_tests_failed:
+    BLOCK
+
+elif tolerance_failed:
+    BLOCK
+
+elif security_violation:
+    BLOCK
+
+elif evidence_signature_invalid:
+    BLOCK
+
+else:
+    PASS
+
+No agent is permitted to implement an alternative gate interpretation.
+
+---
+
+25. Failure Handling
+
+Every failure creates:
+
+INCIDENT
+
+containing:
+
+incident_id
+release
+gate
+severity
+observed_failure
+expected_behavior
+evidence
+environment
+commit
+device
+probable_cause
+remediation
+owner
+retest_required
+rollback_required
+
+Agent 2 performs remediation.
+
+Agent 1 determines whether remediation is sufficient.
+
+A failed physical gate cannot be bypassed because software tests passed.
+
+---
+
+26. Rollback Procedure
+
+Rollback triggers include:
+
+- production regression
+- security failure
+- telemetry corruption
+- provenance corruption
+- device identity mismatch
+- unsafe hardware behavior
+- Digital Twin divergence
+- failed live parity
+- unauthorized hardware state
+
+Sequence:
+
+DETECT
+ ↓
+FREEZE
+ ↓
+DISABLE HARDWARE CONTROL
+ ↓
+STOP RAW-MEDIA PERSISTENCE
+ ↓
+ISOLATE DEVICE
+ ↓
+ROLL BACK SOFTWARE
+ ↓
+VERIFY SAFE STATE
+ ↓
+COLLECT FORENSIC EVIDENCE
+ ↓
+OPEN INCIDENT
+
+Agent 1 owns the rollback decision.
+
+Agent 2 executes the approved rollback.
+
+---
+
+27. Autonomous Operating Cycle
+
+The two agents run continuously as:
+
+Agent 1:
+PLAN → ASSIGN → REVIEW → AUTHORIZE
+
+Agent 2:
+EXECUTE → MEASURE → VERIFY → REPORT
+
+Then:
+
+REPORT
+   ↓
+REVIEW
+   ↓
+PASS ───────────────→ NEXT GATE
+   │
+   ├── HOLD ────────→ REMEDIATION
+   │
+   └── BLOCK ───────→ INCIDENT
+
+After remediation:
+
+INCIDENT
+   ↓
+TASK
+   ↓
+RETEST
+   ↓
+NEW EVIDENCE
+   ↓
+INDEPENDENT REVIEW
+
+Never overwrite the original failed evidence.
+
+---
+
+28. Complete Release State Machine
+
+DRAFT
+  ↓
+INTAKE
+  ↓
+DEVELOPMENT
+  ↓
+INTEGRATION
+  ↓
+SECURITY
+  ↓
+STAGING
+  ↓
+SOFTWARE_READY
+  ↓
+HARDWARE_PRECHECK
+  ↓
+H1
+  ↓
+H2
+  ↓
+H3
+  ↓
+H4
+  ↓
+H5
+  ↓
+H6
+  ↓
+HARDWARE_READY
+  ↓
+LIVE_PRECHECK
+  ↓
+LIVE
+  ↓
+PARITY
+  ↓
+RELEASE_CANDIDATE
+  ↓
+FINAL_REVIEW
+  ↓
+AUTHORIZED
+  ↓
+DEPLOYED
+  ↓
+MONITORED
+
+Any gate can transition to:
+
+HOLD
+BLOCKED
+ROLLBACK
+
+---
+
+29. Required Agent Capabilities
+
+Release Governor
+
+repository_reader
+test_result_reader
+security_report_reader
+artifact_verifier
+provenance_validator
+schema_validator
+release_state_manager
+evidence_reviewer
+approval_engine
+audit_writer
+rollback_controller
+
+Validation Engineer
+
+repository_executor
+build_runner
+test_runner
+simulation_runner
+container_runner
+security_scanner
+hardware_adapter
+sensor_adapter
+thermal_adapter
+optical_test_adapter
+acquisition_adapter
+fpga_adapter
+hil_adapter
+telemetry_adapter
+digital_twin_adapter
+evidence_writer
+
+---
+
+30. Hardware Adapter Boundary
+
+Physical hardware must be accessed through an explicit adapter rather than arbitrary agent commands.
+
+Agent 2
+   ↓
+Hardware Adapter
+   ↓
+Device Policy
+   ↓
+Approved Device
+
+The adapter must enforce:
+
+device allowlist
+command allowlist
+rate limits
+safe operating envelope
+emergency stop
+identity verification
+audit logging
+
+No general-purpose shell command should directly control physical equipment.
+
+---
+
+31. CI/CD Release Gates
+
+The CI pipeline should enforce:
+
+PR
+ ↓
+STATIC
+ ↓
+UNIT
+ ↓
+TYPECHECK
+ ↓
+INTEGRATION
+ ↓
+SECURITY
+ ↓
+BUILD
+ ↓
+STAGING
+ ↓
+RELEASE CANDIDATE
+ ↓
+HARDWARE EVIDENCE REQUIRED
+ ↓
+LIVE AUTHORIZATION
+
+CI may automatically advance software gates.
+
+CI must not automatically enable physical control merely because software CI passes.
+
+---
+
+32. Definition of Done
+
+V3.0.0 is considered production-authorized only when:
+
+- development gates pass
+- integration gates pass
+- security gates pass
+- staging gates pass
+- H1 passes
+- H2 passes
+- H3 passes
+- H4 passes
+- H5 passes
+- H6 passes
+- live handshake passes
+- telemetry reaches the Orchestrator
+- telemetry reaches the dashboard
+- Digital Twin Runtime is operational
+- audit event is recorded
+- provenance is intact
+- parity loop is within approved tolerance
+- rollback has been demonstrated
+- final release manifest is signed
+
+Otherwise:
+
+V3.0.0 = HOLD
+
+---
+
+33. Immediate Execution Sequence
+
+The agents should now execute the following order.
+
+Agent 1
+
+- [ ] Create V3.0.0 release state.
+- [ ] Generate acceptance criteria.
+- [ ] Discover repositories and services.
+- [ ] Identify current commit/build state.
+- [ ] Create gate registry.
+- [ ] Create provenance registry.
+- [ ] Assign D1 to Agent 2.
+- [ ] Review D1 evidence.
+- [ ] Assign I1.
+- [ ] Review I1 evidence.
+- [ ] Assign S1.
+- [ ] Review S1 evidence.
+- [ ] Assign ST1.
+- [ ] Review ST1 evidence.
+- [ ] Freeze software release candidate.
+- [ ] Authorize H1–H6 only after software gates pass.
+- [ ] Review hardware evidence.
+- [ ] Authorize live precheck only after H1–H6 pass.
+- [ ] Review live evidence.
+- [ ] Authorize parity.
+- [ ] Generate final release decision.
+
+Agent 2
+
+- [ ] Inspect all assigned repositories.
+- [ ] Establish reproducible environment.
+- [ ] Execute D1.
+- [ ] Produce signed evidence.
+- [ ] Execute I1.
+- [ ] Produce integration evidence.
+- [ ] Execute S1.
+- [ ] Remediate all findings.
+- [ ] Re-run security validation.
+- [ ] Build staging environment.
+- [ ] Execute rollback rehearsal.
+- [ ] Prepare approved hardware.
+- [ ] Execute H1.
+- [ ] Execute H2.
+- [ ] Execute H3.
+- [ ] Execute H4.
+- [ ] Execute H5.
+- [ ] Execute H6.
+- [ ] Execute live handshake.
+- [ ] Verify telemetry.
+- [ ] Verify Digital Twin Runtime.
+- [ ] Execute controlled parity loop.
+- [ ] Submit final evidence package.
+
+---
+
+34. Final Authority Model
+
+The operating system should enforce this hierarchy:
+
+                     RELEASE GOVERNOR
+                            │
+                 ┌──────────┴──────────┐
+                 │                     │
+          RELEASE STATE           AUTHORIZATION
+                 │                     │
+                 └──────────┬──────────┘
+                            │
+                    VALIDATION ENGINEER
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+       SOFTWARE          HARDWARE           LIVE
+          │                 │                 │
+     tests/builds       H1 → H6        telemetry/parity
+
+The fundamental invariant is:
+
+NO EVIDENCE
+    ↓
+NO GATE PASS
+    ↓
+NO RELEASE
+
+And the physical boundary is:
+
+SIMULATION
+    ↓
+SOFTWARE VALIDATION
+    ↓
+INTEGRATION
+    ↓
+STAGING
+    ↓
+CALIBRATED HARDWARE
+    ↓
+MEASURED DATA
+    ↓
+HIL VALIDATION
+    ↓
+REFERENCE PARITY
+    ↓
+LIVE TELEMETRY
+    ↓
+CONTROLLED OPERATION
+
+This converts the podcast dialogue into an operational release architecture: Agent 1 governs truth, authority, provenance, and release state; Agent 2 performs the engineering work and generates reproducible evidence. The system can automate the complete software lifecycle and coordinate physical validation, while deliberately preventing an agent, symbolic release key, simulation, or signed manifest from pretending that unverified hardware evidence exists.

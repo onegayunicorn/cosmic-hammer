@@ -106,3 +106,5 @@ This repository is scaffolded for private development and public review. Add the
 - [Cosmic Camera v3 production build plan](docs/production-increment-v3/PRODUCTION_BUILD_PLAN.md)
 
 - [Cosmic Camera v3 validation evidence](audit/07_V3_VALIDATION.md)
+
+- [Dual-agent release operations](docs/dual-agent-release-operations/README.md)
