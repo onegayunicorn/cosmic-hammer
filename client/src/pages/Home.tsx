@@ -43,6 +43,7 @@ import { trpc } from "@/lib/trpc";
 import EvidenceDashboard from "./EvidenceDashboard";
 import ControlCenter from "./ControlCenter";
 import UnifiedPlatform from "./UnifiedPlatform";
+import CosmicCamera from "./CosmicCamera";
 
 const toneClass = (tone: string) =>
   tone === "apricot"
@@ -1433,6 +1434,7 @@ export default function Home() {
         webhooks: <Webhooks />,
         "control-center": <ControlCenter />,
         platform: <UnifiedPlatform />,
+        "cosmic-camera": <CosmicCamera />,
         docs: <Docs />,
       })[module] ?? <Overview />,
     [module]

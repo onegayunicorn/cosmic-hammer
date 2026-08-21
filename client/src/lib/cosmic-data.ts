@@ -12,6 +12,7 @@ export type ModuleKey =
   | "webhooks"
   | "control-center"
   | "platform"
+  | "cosmic-camera"
   | "docs";
 
 export const navItems: Array<{
@@ -81,6 +82,12 @@ export const navItems: Array<{
     label: "Unified Platform",
     detail: "Systems + engines",
     icon: "⌬",
+  },
+  {
+    key: "cosmic-camera",
+    label: "Cosmic Camera",
+    detail: "Observe safely",
+    icon: "◍",
   },
   { key: "docs", label: "Field notes", detail: "Documentation", icon: "▤" },
 ];

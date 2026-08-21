@@ -10,6 +10,7 @@ import VNext from "./pages/VNext";
 import StationManagement from "./pages/StationManagement";
 import ControlCenter from "./pages/ControlCenter";
 import UnifiedPlatform from "./pages/UnifiedPlatform";
+import CosmicCamera from "./pages/CosmicCamera";
 import NotFound from "@/pages/NotFound";
 import {
   Activity,
@@ -176,6 +177,7 @@ function WorkspaceLayout() {
             <Route path={"/stations"} component={StationManagement} />
             <Route path={"/control-center"} component={ControlCenter} />
             <Route path={"/platform"} component={UnifiedPlatform} />
+            <Route path={"/cosmic-camera"} component={CosmicCamera} />
             <Route path="/:module" component={Home} />
             <Route component={NotFound} />
           </Switch>
