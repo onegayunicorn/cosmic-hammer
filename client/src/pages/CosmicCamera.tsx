@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import CosmicCameraLiveDashboard from "@/components/CosmicCameraLiveDashboard";
 
 type CameraMode = "personal" | "business" | "operations" | "simulation";
 
@@ -170,6 +171,8 @@ export default function CosmicCamera() {
           </div>
         </div>
       </section>
+
+      <CosmicCameraLiveDashboard />
 
       {result && (
         <section

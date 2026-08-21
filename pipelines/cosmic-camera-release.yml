@@ -1,0 +1,24 @@
+name: cosmic-camera-release
+
+stages:
+  - id: software
+    checks: [typecheck, unit-tests, production-build, simulation, security-audit]
+    authorization: release-governor
+    result: PASS_REQUIRED
+  - id: staging
+    checks: [evidence-package, release-seal, rollback-rehearsal]
+    authorization: two-key
+    result: PASS_REQUIRED
+  - id: physical
+    checks: [device-identity, calibration, optical-safety, FPGA-HIL]
+    provenance: MEASURED
+    result: HOLD_UNTIL_SIGNED_EVIDENCE
+  - id: live
+    checks: [optical-bench, independent-review, parity-audit]
+    provenance: MEASURED
+    result: HOLD_UNTIL_SIGNED_EVIDENCE
+
+safety:
+  hardware_actuation: disabled
+  raw_media_persistence: disabled
+  external_writes: disabled

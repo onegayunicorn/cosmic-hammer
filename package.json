@@ -29,7 +29,8 @@
     "simulate:release-operations-v3": "tsx scripts/release-operations-v3.ts",
     "verify:release-seal": "node scripts/verify-release-seal.mjs",
     "verify:evidence-package": "node scripts/verify-evidence-package.mjs",
-    "package:cosmic-camera-v3": "node scripts/package-cosmic-camera-v3.mjs"
+    "package:cosmic-camera-v3": "node scripts/package-cosmic-camera-v3.mjs",
+    "cosmic-camera": "node scripts/cosmic-camera-cli.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
