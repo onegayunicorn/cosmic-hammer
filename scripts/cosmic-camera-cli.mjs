@@ -18,12 +18,15 @@ switch (command) {
     run("pnpm", ["verify:release-seal"]);
     run("pnpm", ["verify:evidence-package"]);
     break;
+  case "runtime":
+    run("pnpm", ["smoke:sovereign-lattice-runtime"]);
+    break;
   case "package":
     run("pnpm", ["package:cosmic-camera-v3"]);
     break;
   default:
     console.error(`Unknown command: ${command}`);
-    console.error("Usage: cosmic-camera <status|simulate|verify|package>");
+    console.error("Usage: cosmic-camera <status|simulate|runtime|verify|package>");
     process.exit(2);
 }
 

@@ -75,6 +75,21 @@ export default function CosmicCameraLiveDashboard() {
         ))}
       </div>
 
+      <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Connected software runtime">
+        {[
+          ["Runtime", "ACTIVE", "LOCAL"],
+          ["J09 twin", "SIMULATED", "PROVENANCE"],
+          ["RFF display", "DERIVED", "NO DEVICE"],
+          ["Ledger", "VALID", "LOCAL ONLY"],
+        ].map(([label, value, status]) => (
+          <div key={label} className="rounded-xl border border-[#73c9c2]/15 bg-[#0b1821] p-4">
+            <div className="mono-label text-[#6f848b]">{label}</div>
+            <div className="mt-2 font-mono text-lg text-[#eef4ef]">{value}</div>
+            <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-[#f4a261]">{status}</div>
+          </div>
+        ))}
+      </div>
+
       <div className="mt-7 grid gap-6 lg:grid-cols-[1.15fr_.85fr]">
         <div>
           <div className="mono-label text-[#6f848b]">EVENT STREAM</div>

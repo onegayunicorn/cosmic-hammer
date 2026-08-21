@@ -1,0 +1,101 @@
+
+> cosmic-hammer@1.0.0 smoke:sovereign-lattice-runtime /home/ubuntu/cosmic-hammer
+> tsx scripts/sovereign-lattice-runtime-smoke.ts
+
+{
+  "name": "sovereign-lattice-runtime-smoke",
+  "status": "PASS",
+  "result": {
+    "runtimeState": "ACTIVE",
+    "modules": [
+      "lattice",
+      "digital_twin",
+      "bridge",
+      "bell_chain",
+      "local_ledger"
+    ],
+    "device": {
+      "deviceId": "J09-S-SIM-001",
+      "transport": "SIMULATED_BLE",
+      "connected": false,
+      "provenance": "SIMULATED",
+      "hardwareActuation": false,
+      "externalWrite": false
+    },
+    "twin": {
+      "deviceId": "J09-S-SIM-001",
+      "batteryPercent": 100,
+      "bleRssi": -42,
+      "phaseRad": 0,
+      "coherence": 0.92,
+      "currentRff": "gold-coast-baseline-rff",
+      "railConnected": false,
+      "displayBuffer": [
+        "PHASE 0.00",
+        "LUX 0.92",
+        "SIMULATED"
+      ],
+      "provenance": "SIMULATED"
+    },
+    "lattice": {
+      "provenance": "DERIVED",
+      "lux": 0.63,
+      "shadow": 0.29,
+      "phase": 0,
+      "alignmentScore": 1,
+      "phaseLocked": true,
+      "frequencyBands": [
+        {
+          "name": "VOID",
+          "frequencyHz": 0,
+          "provenance": "DERIVED"
+        },
+        {
+          "name": "SHADOW",
+          "frequencyHz": 19.8,
+          "provenance": "DERIVED"
+        },
+        {
+          "name": "BASE",
+          "frequencyHz": 432,
+          "provenance": "DERIVED"
+        },
+        {
+          "name": "FLUX",
+          "frequencyHz": 720,
+          "provenance": "DERIVED"
+        },
+        {
+          "name": "NEXUS",
+          "frequencyHz": 880,
+          "provenance": "DERIVED"
+        }
+      ],
+      "hardwareActuation": false,
+      "rawMediaPersisted": false,
+      "externalWrite": false
+    },
+    "bridge": {
+      "activeConnections": 1,
+      "capacity": 3,
+      "externalWrite": false
+    },
+    "bellChain": {
+      "rung": [
+        0,
+        1
+      ],
+      "next": 2
+    },
+    "ledger": {
+      "height": 2,
+      "valid": true,
+      "externalWrite": false
+    },
+    "claims": {
+      "physicalHardware": "UNVERIFIED",
+      "firmwareFlash": "DISABLED",
+      "liveOpticalBench": "UNVERIFIED"
+    }
+  }
+}
