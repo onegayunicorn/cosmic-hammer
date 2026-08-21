@@ -96,3 +96,9 @@ This is a static frontend release. It does not receive webhooks, run external ag
 ## License
 
 This repository is scaffolded for private development and public review. Add the project-specific license you want before distributing derivative work.
+
+## Cosmic Camera audit and onboarding
+
+- [Consumer onboarding guide](docs/onboarding/cosmic-camera-consumer-guide.md)
+- [Defensive security audit](audit/05_SECURITY_AUDIT.md)
+- Run the cross-repository static audit from Architect Orchestrator with `node scripts/security/audit-repositories.mjs`.
