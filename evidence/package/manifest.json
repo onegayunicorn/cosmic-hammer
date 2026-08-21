@@ -1,0 +1,39 @@
+{
+  "packageVersion": "3.0.0",
+  "classification": "UNVERIFIED_SOURCE_CLAIM",
+  "source": "audit/incoming/release-seal/pasted_content.txt",
+  "claimedCommits": ["8d755e8", "fa97eba"],
+  "claimedMerkleRoot": "0af4bdf8529d4372e92c10a43f8e1215b497cb1a719d44c6892e85bc1f1906a2",
+  "claims": {
+    "deviceId": "COSMIC-CAM-001",
+    "serialNumber": "CC-2026-08-21-001",
+    "hardwareRevision": "REV-C",
+    "sensor": "Sony IMX571",
+    "fpga": "Xilinx Kintex-7 XC7K325T-2",
+    "calibrationId": "CAL-2026-08-21-001",
+    "testConfigurationId": "TEST-2026-08-21-001",
+    "independentReviewId": "REV-2026-08-21-001"
+  },
+  "requiredPhysicalArtifacts": [
+    "evidence/device-identity.json",
+    "evidence/calibration-metadata.json",
+    "evidence/test-configuration.json",
+    "evidence/evidence-hashes.json",
+    "evidence/qe-measurement.csv",
+    "evidence/read-noise-measurement.csv",
+    "evidence/dark-current-measurement.csv",
+    "evidence/tec-control-log.csv",
+    "evidence/temperature-stability.csv",
+    "evidence/optical-alignment.json",
+    "evidence/acquisition-log.csv",
+    "evidence/hil-test.log",
+    "evidence/parity-comparison.json",
+    "evidence/independent-review.json"
+  ],
+  "localEvidencePolicy": {
+    "physicalProvenanceAllowed": ["MEASURED"],
+    "requiredAttribution": ["deviceIdentity", "calibrationCertificate", "operator", "measurementTimestamp", "rawOrSignedArtifactDigest"],
+    "missingArtifactsKeepOverallReleaseOnHold": true,
+    "syntheticOrPastedSummariesCannotSatisfyPhysicalGates": true
+  }
+}

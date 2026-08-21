@@ -27,7 +27,8 @@
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "simulate:cosmic-camera-v3": "tsx scripts/cosmic-camera-v3-validation.ts",
     "simulate:release-operations-v3": "tsx scripts/release-operations-v3.ts",
-    "verify:release-seal": "node scripts/verify-release-seal.mjs"
+    "verify:release-seal": "node scripts/verify-release-seal.mjs",
+    "verify:evidence-package": "node scripts/verify-evidence-package.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",

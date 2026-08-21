@@ -1,0 +1,38 @@
+{
+  "status": "HOLD",
+  "classification": "UNVERIFIED_SOURCE_CLAIM",
+  "packageVersion": "3.0.0",
+  "claimedMerkleRoot": "0af4bdf8529d4372e92c10a43f8e1215b497cb1a719d44c6892e85bc1f1906a2",
+  "claimedMerkleRootWellFormed": true,
+  "localMatrixMerkleRoot": "4eadd403f963666dcfe21541610050414a6734e1e93e586e828a79ab110bb57c",
+  "requiredPhysicalArtifactCount": 14,
+  "presentPhysicalArtifactCount": 0,
+  "missingArtifacts": [
+    "evidence/device-identity.json",
+    "evidence/calibration-metadata.json",
+    "evidence/test-configuration.json",
+    "evidence/evidence-hashes.json",
+    "evidence/qe-measurement.csv",
+    "evidence/read-noise-measurement.csv",
+    "evidence/dark-current-measurement.csv",
+    "evidence/tec-control-log.csv",
+    "evidence/temperature-stability.csv",
+    "evidence/optical-alignment.json",
+    "evidence/acquisition-log.csv",
+    "evidence/hil-test.log",
+    "evidence/parity-comparison.json",
+    "evidence/independent-review.json"
+  ],
+  "softwarePass": true,
+  "physicalGateCount": 8,
+  "measuredPhysicalPassCount": 0,
+  "unsafePhysicalPasses": [],
+  "physicalEvidenceSufficient": false,
+  "controls": {
+    "hardwareControl": "DISABLED",
+    "rawMediaPersistence": "DISABLED",
+    "externalWrites": false
+  },
+  "decision": "SOFTWARE_PASS_PHYSICAL_HOLD",
+  "reason": "The supplied evidence package is a pasted source claim; referenced raw and signed physical artifacts are not present locally."
+}

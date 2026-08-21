@@ -111,3 +111,7 @@ This repository is scaffolded for private development and public review. Add the
 
 - [Release phases and two-key operations](release/operations/README.md)
 - [12-gate release matrix](release/gates/matrix.json)
+
+## Evidence-package verification
+
+The V3.0.0 evidence-package claim is preserved under `audit/incoming/release-seal/`. Run `pnpm verify:evidence-package` to check local artifact completeness and provenance. The command intentionally keeps physical and live gates on HOLD when raw or independently signed measurements are absent.
