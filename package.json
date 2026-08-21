@@ -26,6 +26,7 @@
     "verify:production": "node scripts/verify-production.mjs",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "simulate:cosmic-camera-v3": "tsx scripts/cosmic-camera-v3-validation.ts",
+    "simulate:sovereign-lattice": "tsx scripts/sovereign-lattice-simulation.ts",
     "simulate:release-operations-v3": "tsx scripts/release-operations-v3.ts",
     "verify:release-seal": "node scripts/verify-release-seal.mjs",
     "verify:evidence-package": "node scripts/verify-evidence-package.mjs",
