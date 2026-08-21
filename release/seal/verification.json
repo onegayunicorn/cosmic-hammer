@@ -1,0 +1,20 @@
+{
+  "status": "HOLD",
+  "protocol": "Dual-Agent Two-Key Protocol",
+  "version": "3.0.0",
+  "gateCount": 12,
+  "expectedGateCount": 12,
+  "missing": [],
+  "duplicateIds": [],
+  "unsafePhysicalPass": [],
+  "softwarePass": true,
+  "physicalReady": false,
+  "computedMerkleRoot": "4eadd403f963666dcfe21541610050414a6734e1e93e586e828a79ab110bb57c",
+  "controls": {
+    "hardwareControl": "DISABLED",
+    "rawMediaPersistence": "DISABLED",
+    "externalWrites": false
+  },
+  "externalWrites": false,
+  "sourceSealClaim": "unverified-until-independent-evidence-is-imported"
+}

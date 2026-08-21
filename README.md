@@ -108,3 +108,6 @@ This repository is scaffolded for private development and public review. Add the
 - [Cosmic Camera v3 validation evidence](audit/07_V3_VALIDATION.md)
 
 - [Dual-agent release operations](docs/dual-agent-release-operations/README.md)
+
+- [Release phases and two-key operations](release/operations/README.md)
+- [12-gate release matrix](release/gates/matrix.json)

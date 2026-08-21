@@ -1,0 +1,25 @@
+{
+  "version": "3.0.0",
+  "protocol": "Dual-Agent Two-Key Protocol",
+  "status": "SOFTWARE_PASS_PHYSICAL_HOLD",
+  "provenanceInvariant": "SIMULATED != MEASURED",
+  "controls": {
+    "hardwareControl": "DISABLED",
+    "rawMediaPersistence": "DISABLED",
+    "externalWrites": false
+  },
+  "gates": [
+    { "id": "D1", "title": "Development & Determinism", "tier": "Software", "provenance": "SIMULATED", "status": "PASS", "evidence": "audit/evidence/dual-agent-v3-final/architect_typecheck.log" },
+    { "id": "I1", "title": "API Contracts & Digital Twin Schema", "tier": "Software", "provenance": "DERIVED", "status": "PASS", "evidence": "audit/08_DUAL_AGENT_RECONCILIATION.md" },
+    { "id": "S1", "title": "Security, SAST & Secret Audits", "tier": "Software", "provenance": "DERIVED", "status": "PASS", "evidence": "audit/evidence/security/cross-repository-static-audit.json" },
+    { "id": "ST1", "title": "Staging & Rollback Rehearsal", "tier": "Software", "provenance": "SIMULATED", "status": "PASS", "evidence": "audit/evidence/dual-agent-v3-final/architect_lux_verify.log" },
+    { "id": "H1", "title": "IMX571 Sensor Identity & Physical QE", "tier": "Physical Hardware", "provenance": "UNKNOWN", "status": "UNVERIFIED", "evidence": null },
+    { "id": "H2", "title": "Micro-TEC Thermal Loop Control", "tier": "Physical Hardware", "provenance": "UNKNOWN", "status": "UNVERIFIED", "evidence": null },
+    { "id": "H3", "title": "Multi-FOV Optical Turret Alignment", "tier": "Physical Hardware", "provenance": "UNKNOWN", "status": "UNVERIFIED", "evidence": null },
+    { "id": "H4", "title": "Sensor-to-FPGA Acquisition Channel", "tier": "Physical Hardware", "provenance": "UNKNOWN", "status": "UNVERIFIED", "evidence": null },
+    { "id": "H5", "title": "Kintex-7 FPGA Hardware-in-the-Loop", "tier": "Physical Hardware", "provenance": "UNKNOWN", "status": "UNVERIFIED", "evidence": null },
+    { "id": "H6", "title": "Float32 vs FPGA Fixed-Point Parity", "tier": "Physical Hardware", "provenance": "UNKNOWN", "status": "UNVERIFIED", "evidence": null },
+    { "id": "L1", "title": "Live Optical Bench End-to-End", "tier": "Live Optical", "provenance": "UNKNOWN", "status": "HOLD", "evidence": null },
+    { "id": "PARITY", "title": "Tri-Stream Grounding Audit", "tier": "Live Parity", "provenance": "UNKNOWN", "status": "HOLD", "evidence": null }
+  ]
+}
